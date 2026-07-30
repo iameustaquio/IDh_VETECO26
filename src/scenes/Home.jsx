@@ -50,7 +50,7 @@ export function Home() {
         const shellEl = shellRef.current;
         const sceneEl = scenes[i].current;
         const isLast = i === shells.length - 1;
-        gsap.set(shellEl, { zIndex: i + 1 });
+        gsap.set(shellEl, { zIndex: i + 1, pointerEvents: i === 0 ? "auto" : "none" });
 
         if (isLast) return;
 
@@ -60,6 +60,15 @@ export function Home() {
           end: "+=100%",
           pin: true,
           pinSpacing: false,
+          // Con pinSpacing:false, la escena siguiente ocupa la misma caja en
+          // pantalla que esta (fijada) durante todo su rango de pin, aunque
+          // se vea transparente: al tener mayor z-index intercepta cualquier
+          // clic en la escena de debajo. Solo la escena realmente activa
+          // debe recibir eventos de puntero.
+          onToggle: (self) => {
+            gsap.set(shellEl, { pointerEvents: self.isActive ? "auto" : "none" });
+            gsap.set(shells[i + 1].current, { pointerEvents: self.isActive ? "none" : "auto" });
+          },
         });
 
         gsap.fromTo(
@@ -81,16 +90,13 @@ export function Home() {
         );
       });
 
-      ScrollTrigger.create({
-        trigger: homeRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        snap: {
-          snapTo: 1 / (shells.length - 1),
-          duration: { min: 0.3, max: 0.7 },
-          ease: "power2.inOut",
-        },
-      });
+      // Nota: se probó un snap global a los límites de cada escena (progreso
+      // en incrementos de 1/4), pero en esta arquitectura de pines
+      // encadenados (pinSpacing:false) el snap de GSAP resolvía mal el
+      // punto más cercano y animaba el scroll de vuelta a 0 casi un segundo
+      // después de soltar la rueda — un salto grave, no un ajuste suave. El
+      // scroll libre y continuo ya cumple el objetivo "worldscroll"; se
+      // retira el snap en vez de mantener ese comportamiento errático.
     }, homeRef);
 
     return () => ctx.revert();

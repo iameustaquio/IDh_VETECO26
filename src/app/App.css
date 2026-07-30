@@ -1,3 +1,13 @@
+#smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+}
+
+#smooth-content {
+  width: 100%;
+}
+
 .app {
   width: 100%;
   background: var(--color-white);
