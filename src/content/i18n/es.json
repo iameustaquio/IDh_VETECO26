@@ -1,0 +1,29 @@
+{
+  "home": {
+    "scene1": {
+      "message": "Detrás de cada herraje hay ingeniería pensada para resolver problemas reales.",
+      "scrollHint": "Desliza para descubrir"
+    },
+    "scene2": {
+      "message": "Cada apertura, cada cierre, cada carpintería tiene una exigencia distinta."
+    },
+    "scene3": {
+      "title": "Se ve simple. No lo es.",
+      "callout": "Sistema de cierre multipunto"
+    },
+    "scene4": {
+      "title": "Presencia activa en 17 países.",
+      "subtitle": "Cinco mercados donde IDh trabaja codo con codo con el cliente.",
+      "markets": ["España", "Portugal", "México", "Estados Unidos", "Oriente Medio"]
+    },
+    "scene5": {
+      "message": "Esto es solo el principio.",
+      "cta": "Explorar el showroom"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "back": "Atrás",
+    "exit": "Salir"
+  }
+}

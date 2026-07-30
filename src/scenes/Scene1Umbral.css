@@ -1,0 +1,51 @@
+.scene--1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  position: relative;
+  gap: var(--space-6);
+}
+
+.scene1__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, #dbe3f0 0%, transparent 62%);
+  pointer-events: none;
+}
+
+.scene1__logo {
+  width: min(22vw, 260px);
+  z-index: 1;
+}
+
+.scene1__message {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  color: var(--color-graphite);
+  text-align: center;
+  max-width: 46ch;
+  line-height: 1.4;
+  z-index: 1;
+}
+
+.scene1__footer {
+  position: absolute;
+  bottom: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.scene1__hint {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-grey-mid);
+  opacity: 0;
+}

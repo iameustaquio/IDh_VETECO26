@@ -1,0 +1,30 @@
+{
+  "_draft": "Traducción provisional pendiente de revisión por IDh — no es copy oficial.",
+  "home": {
+    "scene1": {
+      "message": "Behind every fitting is engineering built to solve real problems.",
+      "scrollHint": "Scroll to discover"
+    },
+    "scene2": {
+      "message": "Every opening, every closing, every window frame has its own demands."
+    },
+    "scene3": {
+      "title": "It looks simple. It isn't.",
+      "callout": "Multi-point locking system"
+    },
+    "scene4": {
+      "title": "Active presence in 17 countries.",
+      "subtitle": "Five markets where IDh works hand in hand with the customer.",
+      "markets": ["Spain", "Portugal", "Mexico", "United States", "Middle East"]
+    },
+    "scene5": {
+      "message": "This is just the beginning.",
+      "cta": "Explore the showroom"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "back": "Back",
+    "exit": "Exit"
+  }
+}

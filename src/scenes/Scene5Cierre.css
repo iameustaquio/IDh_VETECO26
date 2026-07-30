@@ -1,0 +1,28 @@
+.scene--5 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+}
+
+.scene5__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.scene5__logo {
+  width: min(14vw, 160px);
+}
+
+.scene5__message {
+  font-family: var(--font-ui);
+  font-size: var(--fs-h2);
+  color: var(--color-graphite);
+}
+
+.scene5__content .button {
+  font-size: 1.2rem;
+  padding: 0 var(--space-6);
+}

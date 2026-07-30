@@ -1,0 +1,30 @@
+{
+  "_draft": "Tradução provisória pendente de revisão pela IDh — não é copy oficial.",
+  "home": {
+    "scene1": {
+      "message": "Por trás de cada ferragem há engenharia pensada para resolver problemas reais.",
+      "scrollHint": "Deslize para descobrir"
+    },
+    "scene2": {
+      "message": "Cada abertura, cada fecho, cada caixilharia tem uma exigência diferente."
+    },
+    "scene3": {
+      "title": "Parece simples. Não é.",
+      "callout": "Sistema de fecho multiponto"
+    },
+    "scene4": {
+      "title": "Presença ativa em 17 países.",
+      "subtitle": "Cinco mercados onde a IDh trabalha lado a lado com o cliente.",
+      "markets": ["Espanha", "Portugal", "México", "Estados Unidos", "Médio Oriente"]
+    },
+    "scene5": {
+      "message": "Isto é apenas o início.",
+      "cta": "Explorar o showroom"
+    }
+  },
+  "nav": {
+    "home": "Início",
+    "back": "Voltar",
+    "exit": "Sair"
+  }
+}

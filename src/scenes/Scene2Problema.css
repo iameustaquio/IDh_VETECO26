@@ -1,0 +1,32 @@
+.scene--2 {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-ink);
+}
+
+.scene2__image-wrap {
+  position: absolute;
+  inset: -6% 0;
+  overflow: hidden;
+}
+
+.scene2__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+  will-change: transform, filter;
+}
+
+.scene2__message {
+  position: absolute;
+  left: var(--grid-margin);
+  bottom: var(--space-6);
+  max-width: 20ch;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--fs-h2);
+  line-height: 1.3;
+  color: var(--color-white);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
