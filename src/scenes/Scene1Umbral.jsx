@@ -9,6 +9,9 @@ import "./Scene1Umbral.css";
 // el logo se disuelve con leve escala ascendente y el mensaje aparece
 // palabra a palabra. El indicador "desliza" solo aparece tras 2s de
 // inactividad para no interrumpir si el comercial ya ha empezado a hablar.
+// El anillo técnico de fondo (SVG, giro casi imperceptible por CSS) es el
+// único elemento decorativo — aporta profundidad e ingeniería sin romper
+// el silencio visual del punto 10 del maestro.
 export function Scene1Umbral({ sceneRef }) {
   const { t } = useLanguage();
   const logoRef = useRef(null);
@@ -50,12 +53,28 @@ export function Scene1Umbral({ sceneRef }) {
   return (
     <section className="scene scene--1" ref={sceneRef}>
       <div className="scene1__glow" />
-      <img ref={logoRef} className="scene1__logo" src={logoIdh} alt="IDh — Innovación y Desarrollo de herrajes" />
-      <p className="scene1__message" ref={wordsRef}>
-        {t.home.scene1.message.split(" ").map((word, i) => (
-          <span key={i}>{word}&nbsp;</span>
+      <svg className="scene1__ring" viewBox="0 0 400 400" aria-hidden="true">
+        <circle cx="200" cy="200" r="188" />
+        <circle cx="200" cy="200" r="150" strokeDasharray="2 10" />
+        {Array.from({ length: 36 }).map((_, i) => (
+          <line
+            key={i}
+            x1="200"
+            y1="8"
+            x2="200"
+            y2={i % 3 === 0 ? "22" : "16"}
+            transform={`rotate(${i * 10} 200 200)`}
+          />
         ))}
-      </p>
+      </svg>
+      <div className="scene1__content">
+        <img ref={logoRef} className="scene1__logo" src={logoIdh} alt="IDh — Innovación y Desarrollo de herrajes" />
+        <p className="scene1__message" ref={wordsRef}>
+          {t.home.scene1.message.split(" ").map((word, i) => (
+            <span key={i}>{word}&nbsp;</span>
+          ))}
+        </p>
+      </div>
       <div className="scene1__footer">
         <span className="scene1__hint" ref={hintRef}>
           {t.home.scene1.scrollHint}

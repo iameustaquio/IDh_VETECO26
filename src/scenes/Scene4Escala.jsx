@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { GlassPanel } from "../components/GlassPanel.jsx";
 import { useLanguage } from "../hooks/useLanguage.js";
 import "./Scene4Escala.css";
 
@@ -8,7 +9,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Escena 4 — La escala internacional (documento 03). Los marcadores de
 // mercado se activan según la posición de scroll, no por toque obligatorio;
-// tocar uno lo resalta sin salir de la escena.
+// tocar uno lo resalta y despliega una tarjeta con el dato de ese mercado,
+// sin salir de la escena. herrajesidh.com/nosotros no es accesible desde
+// este entorno de desarrollo, así que marketDetails lleva contenido
+// placeholder hasta que se sustituya por el texto real.
 export function Scene4Escala({ sceneRef }) {
   const { t } = useLanguage();
   const [active, setActive] = useState(null);
@@ -25,7 +29,6 @@ export function Scene4Escala({ sceneRef }) {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sceneRef.current,
-          scroller: document.querySelector(".home"),
           start: "top 70%",
           end: "top 20%",
           scrub: true,
@@ -61,6 +64,17 @@ export function Scene4Escala({ sceneRef }) {
           </button>
         ))}
       </div>
+      <GlassPanel className={`scene4__card${active !== null ? " is-visible" : ""}`}>
+        {active !== null && (
+          <>
+            <button type="button" className="scene4__card-close" onClick={() => setActive(null)} aria-label="Cerrar">
+              ×
+            </button>
+            <h3>{t.home.scene4.markets[active]}</h3>
+            <p>{t.home.scene4.marketDetails[active]}</p>
+          </>
+        )}
+      </GlassPanel>
     </section>
   );
 }

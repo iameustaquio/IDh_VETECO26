@@ -10,12 +10,34 @@
     },
     "scene3": {
       "title": "It looks simple. It isn't.",
-      "callout": "Multi-point locking system"
+      "callout": "Multi-point locking system",
+      "productRef": "CR603 / CR603K — Multi-point handle (source: IDh datasheet)",
+      "callouts": [
+        {
+          "title": "Zinc-plated steel spindle",
+          "text": "7 mm zinc-plated steel, transmitting rotation to the multi-point mechanism without play."
+        },
+        {
+          "title": "Multiple locking positions",
+          "text": "The handle locks at several degrees of rotation, not only in the final position."
+        },
+        {
+          "title": "Key-locking version (CR603K)",
+          "text": "Same base design with a key lock for extra security, no need to change the handle."
+        }
+      ]
     },
     "scene4": {
       "title": "Active presence in 17 countries.",
       "subtitle": "Five markets where IDh works hand in hand with the customer.",
-      "markets": ["Spain", "Portugal", "Mexico", "United States", "Middle East"]
+      "markets": ["Spain", "Portugal", "Mexico", "United States", "Middle East"],
+      "marketDetails": [
+        "Content pending — to be completed with the real text from herrajesidh.com/nosotros.",
+        "Content pending — to be completed with the real text from herrajesidh.com/nosotros.",
+        "Content pending — to be completed with the real text from herrajesidh.com/nosotros.",
+        "Content pending — to be completed with the real text from herrajesidh.com/nosotros.",
+        "Content pending — to be completed with the real text from herrajesidh.com/nosotros."
+      ]
     },
     "scene5": {
       "message": "This is just the beginning.",

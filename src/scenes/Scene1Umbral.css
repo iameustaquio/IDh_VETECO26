@@ -1,11 +1,8 @@
 .scene--1 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 1fr auto var(--space-7);
+  justify-items: center;
   background: var(--color-white);
-  position: relative;
-  gap: var(--space-6);
 }
 
 .scene1__glow {
@@ -13,6 +10,37 @@
   inset: 0;
   background: radial-gradient(circle at 50% 42%, #dbe3f0 0%, transparent 62%);
   pointer-events: none;
+}
+
+.scene1__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(34vw, 420px);
+  height: min(34vw, 420px);
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: var(--color-brand-blue);
+  stroke-opacity: 0.14;
+  stroke-width: 1;
+  animation: scene1-ring-spin 90s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scene1-ring-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.scene1__content {
+  grid-row: 2;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
 }
 
 .scene1__logo {
@@ -25,19 +53,19 @@
   font-weight: 400;
   font-size: var(--fs-h2);
   color: var(--color-graphite);
-  text-align: center;
   max-width: 46ch;
   line-height: 1.4;
   z-index: 1;
 }
 
 .scene1__footer {
-  position: absolute;
-  bottom: var(--space-6);
+  grid-row: 3;
+  align-self: end;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
+  padding-bottom: var(--space-4);
 }
 
 .scene1__hint {

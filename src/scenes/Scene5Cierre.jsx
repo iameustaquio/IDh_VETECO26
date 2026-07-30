@@ -28,7 +28,6 @@ export function Scene5Cierre({ sceneRef }) {
           ease: "none",
           scrollTrigger: {
             trigger: sceneRef.current,
-            scroller: document.querySelector(".home"),
             start: "top 90%",
             end: "top 50%",
             scrub: true,

@@ -10,12 +10,34 @@
     },
     "scene3": {
       "title": "Parece simples. Não é.",
-      "callout": "Sistema de fecho multiponto"
+      "callout": "Sistema de fecho multiponto",
+      "productRef": "CR603 / CR603K — Maçaneta multiponto (fonte: ficha técnica IDh)",
+      "callouts": [
+        {
+          "title": "Quadradinho de aço zincado",
+          "text": "7 mm de aço zincado, transmite a rotação ao mecanismo multiponto sem folgas."
+        },
+        {
+          "title": "Várias posições de fecho",
+          "text": "A maçaneta fecha em vários graus de rotação, não só na posição final."
+        },
+        {
+          "title": "Versão com chave (CR603K)",
+          "text": "Mesmo design de base com fecho por chave para segurança extra, sem trocar de maçaneta."
+        }
+      ]
     },
     "scene4": {
       "title": "Presença ativa em 17 países.",
       "subtitle": "Cinco mercados onde a IDh trabalha lado a lado com o cliente.",
-      "markets": ["Espanha", "Portugal", "México", "Estados Unidos", "Médio Oriente"]
+      "markets": ["Espanha", "Portugal", "México", "Estados Unidos", "Médio Oriente"],
+      "marketDetails": [
+        "Conteúdo pendente — a completar com o texto real de herrajesidh.com/nosotros.",
+        "Conteúdo pendente — a completar com o texto real de herrajesidh.com/nosotros.",
+        "Conteúdo pendente — a completar com o texto real de herrajesidh.com/nosotros.",
+        "Conteúdo pendente — a completar com o texto real de herrajesidh.com/nosotros.",
+        "Conteúdo pendente — a completar com o texto real de herrajesidh.com/nosotros."
+      ]
     },
     "scene5": {
       "message": "Isto é apenas o início.",

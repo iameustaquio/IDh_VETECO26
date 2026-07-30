@@ -9,12 +9,34 @@
     },
     "scene3": {
       "title": "Se ve simple. No lo es.",
-      "callout": "Sistema de cierre multipunto"
+      "callout": "Sistema de cierre multipunto",
+      "productRef": "CR603 / CR603K — Manilla multipunto (fuente: ficha técnica IDh)",
+      "callouts": [
+        {
+          "title": "Cuadradillo de acero zincado",
+          "text": "7 mm de acero zincado, para transmitir el giro al mecanismo multipunto sin holguras."
+        },
+        {
+          "title": "Múltiples posiciones de enclavamiento",
+          "text": "La manilla enclava en distintos grados de giro, no solo en la posición final."
+        },
+        {
+          "title": "Versión con llave (CR603K)",
+          "text": "Mismo diseño con bloqueo por llave para un extra de seguridad, sin cambiar de manilla base."
+        }
+      ]
     },
     "scene4": {
       "title": "Presencia activa en 17 países.",
       "subtitle": "Cinco mercados donde IDh trabaja codo con codo con el cliente.",
-      "markets": ["España", "Portugal", "México", "Estados Unidos", "Oriente Medio"]
+      "markets": ["España", "Portugal", "México", "Estados Unidos", "Oriente Medio"],
+      "marketDetails": [
+        "Contenido pendiente — a completar con el texto real de herrajesidh.com/nosotros.",
+        "Contenido pendiente — a completar con el texto real de herrajesidh.com/nosotros.",
+        "Contenido pendiente — a completar con el texto real de herrajesidh.com/nosotros.",
+        "Contenido pendiente — a completar con el texto real de herrajesidh.com/nosotros.",
+        "Contenido pendiente — a completar con el texto real de herrajesidh.com/nosotros."
+      ]
     },
     "scene5": {
       "message": "Esto es solo el principio.",

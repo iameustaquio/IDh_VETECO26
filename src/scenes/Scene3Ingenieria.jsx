@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import scene3Image from "../assets/home/scene3-manilla.jpg";
@@ -13,10 +13,17 @@ gsap.registerPlugin(ScrollTrigger);
 // fotografía de producto + callouts progresivos — mismo objetivo narrativo
 // (resaltar puntos de ensayo), sin bloquear esta iteración en un asset que
 // aún no existe. Cuando haya un modelo 3D real, este es el punto a revisar.
-const CALLOUTS = [{ top: "24%", left: "58%" }, { top: "48%", left: "52%" }, { top: "68%", left: "48%" }];
+//
+// Los callouts son interactivos (el documento 03 ya lo pedía: "permitiendo
+// al comercial saltar directamente al punto que le interese"): al tocar
+// uno se abre una tarjeta con el dato real de la ficha técnica CR603/CR603K
+// — el producto que más se corresponde con la foto usada aquí. A confirmar
+// con IDh si la pieza real es otra (p. ej. CR604) para sustituir el dato.
+const CALLOUT_POSITIONS = [{ top: "24%", left: "58%" }, { top: "48%", left: "52%" }, { top: "68%", left: "48%" }];
 
 export function Scene3Ingenieria({ sceneRef }) {
   const { t } = useLanguage();
+  const [activeCallout, setActiveCallout] = useState(null);
   const calloutRefs = useRef([]);
   calloutRefs.current = [];
 
@@ -29,7 +36,6 @@ export function Scene3Ingenieria({ sceneRef }) {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sceneRef.current,
-          scroller: document.querySelector(".home"),
           start: "top 70%",
           end: "top 20%",
           scrub: true,
@@ -45,16 +51,42 @@ export function Scene3Ingenieria({ sceneRef }) {
     return () => ctx.revert();
   }, [sceneRef]);
 
+  const callouts = t.home.scene3.callouts;
+  const active = activeCallout === null ? null : callouts[activeCallout];
+
   return (
     <section className="scene scene--3" ref={sceneRef}>
       <h2 className="scene3__title">{t.home.scene3.title}</h2>
-      <div className="scene3__stage">
-        <img className="scene3__image" src={scene3Image} alt="Manilla IDh — detalle de ingeniería" />
-        {CALLOUTS.map((pos, i) => (
-          <span key={i} className="scene3__callout" style={pos} ref={addCalloutRef} />
-        ))}
+      <div className="scene3__body">
+        <div className="scene3__stage">
+          <img className="scene3__image" src={scene3Image} alt="Manilla IDh — detalle de ingeniería" />
+          {CALLOUT_POSITIONS.map((pos, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`scene3__callout${activeCallout === i ? " is-active" : ""}`}
+              style={pos}
+              ref={addCalloutRef}
+              onClick={() => setActiveCallout(activeCallout === i ? null : i)}
+              aria-label={callouts[i].title}
+            />
+          ))}
+        </div>
+        <div className={`scene3__card${active ? " is-visible" : ""}`}>
+          {active ? (
+            <>
+              <button type="button" className="scene3__card-close" onClick={() => setActiveCallout(null)} aria-label="Cerrar">
+                ×
+              </button>
+              <h3>{active.title}</h3>
+              <p>{active.text}</p>
+              <span className="scene3__card-ref">{t.home.scene3.productRef}</span>
+            </>
+          ) : (
+            <p className="scene3__card-empty">{t.home.scene3.callout}</p>
+          )}
+        </div>
       </div>
-      <p className="scene3__label">{t.home.scene3.callout}</p>
     </section>
   );
 }

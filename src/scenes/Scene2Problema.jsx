@@ -26,7 +26,6 @@ export function Scene2Problema({ sceneRef }) {
           ease: "none",
           scrollTrigger: {
             trigger: sceneRef.current,
-            scroller: document.querySelector(".home"),
             start: "top bottom",
             end: "top top",
             scrub: true,
@@ -42,7 +41,6 @@ export function Scene2Problema({ sceneRef }) {
           ease: "none",
           scrollTrigger: {
             trigger: sceneRef.current,
-            scroller: document.querySelector(".home"),
             start: "top bottom",
             end: "bottom top",
             scrub: true,
@@ -59,7 +57,6 @@ export function Scene2Problema({ sceneRef }) {
           ease: "none",
           scrollTrigger: {
             trigger: sceneRef.current,
-            scroller: document.querySelector(".home"),
             start: "top 80%",
             end: "top 40%",
             scrub: true,

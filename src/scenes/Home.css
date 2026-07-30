@@ -1,22 +1,12 @@
 .home {
-  height: 100vh;
+  position: relative;
   width: 100%;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
-}
-
-/* Inercia corta al soltar (documento maestro, sección 24) */
-@media (pointer: coarse) {
-  .home {
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
 .scene {
   height: 100vh;
   width: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+  will-change: transform, filter;
 }
