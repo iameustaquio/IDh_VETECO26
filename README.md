@@ -17,8 +17,9 @@ npm run dev
 
 ## Estado actual
 
-- HOME (5 escenas del storyboard): completo.
+- HOME (5 escenas del storyboard): completo, con scroll continuo tipo
+  "worldscroll" (pin + solapamiento entre escenas vía GSAP ScrollTrigger).
 - Menú principal y fichas de las 5 secciones (Proyectos, Soluciones, Novedades,
   Calidad, IDH): pendiente, placeholder de navegación en `src/sections/MenuPrincipal.jsx`.
-- Tipografía Inter cargada desde Google Fonts (fase web); pendiente auto-hospedarla
-  antes del despliegue offline en el kiosco del stand.
+- Tipografías (Triplex e Inter) auto-hospedadas — sin dependencias externas,
+  válido tanto para la web como para el despliegue offline en el kiosco.
