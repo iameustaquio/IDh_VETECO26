@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import logoIdh from "../assets/brand/logo-idh.svg";
+import { BlueprintBackground } from "../components/BlueprintBackground.jsx";
 import { LanguageSwitcher } from "../components/LanguageSwitcher.jsx";
 import { useLanguage } from "../hooks/useLanguage.js";
 import "./Scene1Umbral.css";
@@ -53,20 +54,7 @@ export function Scene1Umbral({ sceneRef }) {
   return (
     <section className="scene scene--1" ref={sceneRef}>
       <div className="scene1__glow" />
-      <svg className="scene1__ring" viewBox="0 0 400 400" aria-hidden="true">
-        <circle cx="200" cy="200" r="188" />
-        <circle cx="200" cy="200" r="150" strokeDasharray="2 10" />
-        {Array.from({ length: 36 }).map((_, i) => (
-          <line
-            key={i}
-            x1="200"
-            y1="8"
-            x2="200"
-            y2={i % 3 === 0 ? "22" : "16"}
-            transform={`rotate(${i * 10} 200 200)`}
-          />
-        ))}
-      </svg>
+      <BlueprintBackground />
       <div className="scene1__content">
         <img ref={logoRef} className="scene1__logo" src={logoIdh} alt="IDh — Innovación y Desarrollo de herrajes" />
         <p className="scene1__message" ref={wordsRef}>

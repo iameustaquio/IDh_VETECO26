@@ -23,26 +23,66 @@
   text-align: center;
 }
 
-.scene4__map {
+.scene4__stage {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   width: min(60vw, 800px);
-  margin-top: var(--space-6);
+  height: 320px;
+  margin-top: var(--space-5);
 }
 
-.scene4__line {
+/* --- Globo wireframe: truco de 3D con CSS puro (sin WebGL), coherente
+   con el punto 19 del maestro. Cada meridiano es un círculo rotado en Y
+   dentro de un contenedor con perspectiva: visto de frente se ve como
+   una elipse cada vez más estrecha según el ángulo. --- */
+.scene4__globe-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  pointer-events: none;
+}
+
+.scene4__globe {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  transform-style: preserve-3d;
+}
+
+.scene4__meridian {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-grey-mid);
+  opacity: 0.35;
+}
+
+.scene4__parallel {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--color-grey-mid);
+  opacity: 0.35;
+}
+
+.scene4__arc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.scene4__plane {
   position: absolute;
   left: 0;
-  right: 0;
-  top: 6px;
-  height: 1px;
-  background: var(--color-stone);
+  top: 0;
+  opacity: 0;
+  transform-origin: center;
+  filter: drop-shadow(0 4px 8px rgba(23, 23, 26, 0.2));
 }
 
 .scene4__marker {
-  position: relative;
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,6 +91,7 @@
   border: none;
   cursor: pointer;
   padding: var(--space-1);
+  transform: translate(-50%, -50%);
 }
 
 .scene4__name {
@@ -65,6 +106,7 @@
   height: 14px;
   border-radius: 50%;
   background: var(--color-brand-blue);
+  box-shadow: 0 0 0 4px var(--color-white);
   transition: transform var(--duration-fast) var(--ease-out);
 }
 

@@ -1,7 +1,8 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import scene3Image from "../assets/home/scene3-manilla.jpg";
+import cr603Image from "../assets/soluciones/manillas/cr603.png";
+import cr603kImage from "../assets/soluciones/manillas/cr603k.png";
 import { useLanguage } from "../hooks/useLanguage.js";
 import "./Scene3Ingenieria.css";
 
@@ -10,16 +11,14 @@ gsap.registerPlugin(ScrollTrigger);
 // Escena 3 — La ingeniería detrás (documento 03). Es la única escena del
 // HOME donde el documento pide una cámara 3D real (WebGL) sobre la pieza.
 // Sin un modelo 3D del herraje disponible todavía, se resuelve con la
-// fotografía de producto + callouts progresivos — mismo objetivo narrativo
-// (resaltar puntos de ensayo), sin bloquear esta iteración en un asset que
-// aún no existe. Cuando haya un modelo 3D real, este es el punto a revisar.
+// fotografía de producto (recortada de la ficha técnica CR603/CR603K) +
+// callouts progresivos. Cuando haya un modelo 3D real, este es el punto
+// a revisar.
 //
-// Los callouts son interactivos (el documento 03 ya lo pedía: "permitiendo
-// al comercial saltar directamente al punto que le interese"): al tocar
-// uno se abre una tarjeta con el dato real de la ficha técnica CR603/CR603K
-// — el producto que más se corresponde con la foto usada aquí. A confirmar
-// con IDh si la pieza real es otra (p. ej. CR604) para sustituir el dato.
-const CALLOUT_POSITIONS = [{ top: "24%", left: "58%" }, { top: "48%", left: "52%" }, { top: "68%", left: "48%" }];
+// El texto de cada callout es literal de la ficha CR603/CR603K — sin
+// añadidos. El tercer callout (versión con llave) muestra además la
+// fotografía recortada de la CR603K.
+const CALLOUT_POSITIONS = [{ top: "22%", left: "56%" }, { top: "46%", left: "50%" }, { top: "68%", left: "46%" }];
 
 export function Scene3Ingenieria({ sceneRef }) {
   const { t } = useLanguage();
@@ -59,7 +58,7 @@ export function Scene3Ingenieria({ sceneRef }) {
       <h2 className="scene3__title">{t.home.scene3.title}</h2>
       <div className="scene3__body">
         <div className="scene3__stage">
-          <img className="scene3__image" src={scene3Image} alt="Manilla IDh — detalle de ingeniería" />
+          <img className="scene3__image" src={cr603Image} alt="IDh CR603 — manilla multipunto" />
           {CALLOUT_POSITIONS.map((pos, i) => (
             <button
               key={i}
@@ -78,9 +77,11 @@ export function Scene3Ingenieria({ sceneRef }) {
               <button type="button" className="scene3__card-close" onClick={() => setActiveCallout(null)} aria-label="Cerrar">
                 ×
               </button>
+              {activeCallout === 2 && (
+                <img className="scene3__card-thumb" src={cr603kImage} alt="IDh CR603K — manilla multipunto con llave" />
+              )}
               <h3>{active.title}</h3>
               <p>{active.text}</p>
-              <span className="scene3__card-ref">{t.home.scene3.productRef}</span>
             </>
           ) : (
             <p className="scene3__card-empty">{t.home.scene3.callout}</p>

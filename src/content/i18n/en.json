@@ -11,19 +11,18 @@
     "scene3": {
       "title": "It looks simple. It isn't.",
       "callout": "Multi-point locking system",
-      "productRef": "CR603 / CR603K — Multi-point handle (source: IDh datasheet)",
       "callouts": [
         {
-          "title": "Zinc-plated steel spindle",
-          "text": "7 mm zinc-plated steel, transmitting rotation to the multi-point mechanism without play."
+          "title": "High quality aluminium",
+          "text": "Handle made of high quality aluminium, with a 7 mm zinc-plated steel spindle."
         },
         {
-          "title": "Multiple locking positions",
-          "text": "The handle locks at several degrees of rotation, not only in the final position."
+          "title": "Several locking positions",
+          "text": "Locking positions at several degrees of the handle."
         },
         {
-          "title": "Key-locking version (CR603K)",
-          "text": "Same base design with a key lock for extra security, no need to change the handle."
+          "title": "Key-locking version — CR603K",
+          "text": "We also have the same handle with key lock for an extra of security. Fast and easy lock system."
         }
       ]
     },

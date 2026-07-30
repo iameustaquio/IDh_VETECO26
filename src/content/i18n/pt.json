@@ -11,19 +11,18 @@
     "scene3": {
       "title": "Parece simples. Não é.",
       "callout": "Sistema de fecho multiponto",
-      "productRef": "CR603 / CR603K — Maçaneta multiponto (fonte: ficha técnica IDh)",
       "callouts": [
         {
-          "title": "Quadradinho de aço zincado",
-          "text": "7 mm de aço zincado, transmite a rotação ao mecanismo multiponto sem folgas."
+          "title": "Alumínio de grande qualidade",
+          "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm."
         },
         {
-          "title": "Várias posições de fecho",
-          "text": "A maçaneta fecha em vários graus de rotação, não só na posição final."
+          "title": "Vários graus de fecho",
+          "text": "Posições da maçaneta em vários graus de fecho."
         },
         {
-          "title": "Versão com chave (CR603K)",
-          "text": "Mesmo design de base com fecho por chave para segurança extra, sem trocar de maçaneta."
+          "title": "Versão com chave — CR603K",
+          "text": "Dispõe da versão da maçaneta com chave para segurança extra. Sistema de bloqueio da chave rápido e fácil."
         }
       ]
     },

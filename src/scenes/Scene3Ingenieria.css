@@ -111,11 +111,12 @@
   color: var(--color-graphite);
 }
 
-.scene3__card-ref {
-  font-family: var(--font-ui);
-  font-size: 0.75rem;
-  color: var(--color-grey-mid);
-  margin-top: var(--space-1);
+.scene3__card-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: var(--color-mist);
+  align-self: flex-start;
 }
 
 .scene3__card-empty {

@@ -12,27 +12,6 @@
   pointer-events: none;
 }
 
-.scene1__ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: min(34vw, 420px);
-  height: min(34vw, 420px);
-  transform: translate(-50%, -50%);
-  fill: none;
-  stroke: var(--color-brand-blue);
-  stroke-opacity: 0.14;
-  stroke-width: 1;
-  animation: scene1-ring-spin 90s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes scene1-ring-spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
 .scene1__content {
   grid-row: 2;
   align-self: center;

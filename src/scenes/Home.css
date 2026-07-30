@@ -3,10 +3,18 @@
   width: 100%;
 }
 
-.scene {
+.scene-shell {
   height: 100vh;
   width: 100%;
   position: relative;
+  perspective: 1600px;
+}
+
+.scene {
+  height: 100%;
+  width: 100%;
+  position: relative;
   overflow: hidden;
+  transform-origin: center top;
   will-change: transform, filter;
 }
