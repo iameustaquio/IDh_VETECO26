@@ -10,6 +10,12 @@ import "./Home.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Lag (en segundos) del scrub de las transiciones entre escenas — un
+// scrub:true clásico ata el tween al scroll bruto 1:1; este valor deja
+// que el tween persiga esa posición con una pizca de inercia propia,
+// más "worldscroll" fluido y menos "regla milimetrada".
+const SCRUB_LAG = 0.45;
+
 // HOME — cinco escenas encadenadas por scroll vertical 100% manual
 // (documento maestro, sección 24; documento 03, storyboard completo).
 //
@@ -100,7 +106,37 @@ export function Home() {
               trigger: shells[i + 1].current,
               start: "top bottom",
               end: "top top",
-              scrub: true,
+              // scrub con lag (en vez de scrub:true = 1:1 con el scroll
+              // bruto) para que el tween persiga la posición con una
+              // pizca de inercia propia — la diferencia entre una
+              // transición que "sigue al dedo" y una que se siente
+              // fluida. Mismo valor en los dos tweens de abajo para que
+              // blur, filo y asentamiento de la entrante avancen
+              // siempre a la par (ver nota de la meseta más arriba).
+              scrub: SCRUB_LAG,
+            },
+          },
+        );
+
+        // La escena entrante no solo queda al descubierto por el filo:
+        // también se asienta en su sitio (escala levemente hacia 1 e
+        // inclinación hacia 0), la misma "profundidad sin abusar" que ya
+        // se aplica a la saliente — así ninguna de las dos escenas se
+        // siente estática durante la transición. Va en la escena interior
+        // de shells[i+1], nunca en su shell (que solo recibe el pin y el
+        // clip-path), por la misma razón de siempre.
+        gsap.fromTo(
+          scenes[i + 1].current,
+          { scale: 1.05, rotateX: 4 },
+          {
+            scale: 1,
+            rotateX: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: shells[i + 1].current,
+              start: "top bottom",
+              end: "top top",
+              scrub: SCRUB_LAG,
             },
           },
         );
@@ -125,7 +161,7 @@ export function Home() {
               trigger: shells[i + 1].current,
               start: "top bottom",
               end: "top top",
-              scrub: true,
+              scrub: SCRUB_LAG,
             },
           },
         );

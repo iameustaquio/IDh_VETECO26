@@ -29,7 +29,7 @@ export function App() {
     smootherRef.current = ScrollSmoother.create({
       wrapper: "#smooth-wrapper",
       content: "#smooth-content",
-      smooth: 1.2,
+      smooth: 1.5,
       effects: true,
     });
     return () => smootherRef.current?.kill();
