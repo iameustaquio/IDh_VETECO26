@@ -32,6 +32,37 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  will-change: transform;
+}
+
+.scene3__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-white);
+  box-shadow: 0 6px 16px rgba(23, 23, 26, 0.14);
+  color: var(--color-ink);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.scene3__nav:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.scene3__nav--prev {
+  left: -14px;
+}
+
+.scene3__nav--next {
+  right: -14px;
 }
 
 .scene3__callout {
@@ -75,11 +106,21 @@
   border-color: var(--color-brand-orange);
 }
 
-.scene3__card {
-  width: min(28vw, 340px);
-  min-height: 160px;
-  padding: var(--space-4);
+/* El panel de tarjetas tiene altura fija y las tarjetas se posicionan en
+   uno de tres "huecos" (arriba/medio/abajo) según qué callout las abrió,
+   en vez de aparecer siempre en el mismo sitio. */
+.scene3__card-area {
   position: relative;
+  width: min(28vw, 340px);
+  height: 420px;
+}
+
+.scene3__card {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  min-height: 130px;
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -89,7 +130,8 @@
   box-shadow: none;
   transition:
     background var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out);
+    box-shadow var(--duration-base) var(--ease-out),
+    top var(--duration-base) var(--ease-out);
 }
 
 .scene3__card.is-visible {
@@ -138,4 +180,34 @@
   line-height: 1;
   color: var(--color-grey-mid);
   cursor: pointer;
+}
+
+.scene3__dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  max-width: min(70vw, 700px);
+}
+
+.scene3__dot {
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--color-grey-mid);
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-graphite);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.scene3__dot.is-active {
+  background: var(--color-brand-blue);
+  border-color: var(--color-brand-blue);
+  color: var(--color-white);
 }

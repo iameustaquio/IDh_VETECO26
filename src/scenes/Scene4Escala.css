@@ -25,51 +25,72 @@
 
 .scene4__stage {
   position: relative;
-  width: min(60vw, 800px);
-  height: 320px;
-  margin-top: var(--space-5);
-}
-
-/* --- Globo wireframe: truco de 3D con CSS puro (sin WebGL), coherente
-   con el punto 19 del maestro. Cada meridiano es un círculo rotado en Y
-   dentro de un contenedor con perspectiva: visto de frente se ve como
-   una elipse cada vez más estrecha según el ángulo. --- */
-.scene4__globe-wrap {
-  position: absolute;
-  inset: 0;
+  width: min(70vw, 900px);
+  height: min(60vh, 560px);
+  margin-top: var(--space-4);
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 900px;
-  pointer-events: none;
 }
 
+/* --- Globo: mapa mundi 2D simplificado, dibujado dos veces seguidas y
+   enmascarado en un círculo. Arrastrar desplaza el mapa horizontalmente;
+   al cruzar el ancho de una copia se reengancha en la otra sin costuras
+   (mismo truco que un carrusel infinito), dando la sensación de girar una
+   esfera sin necesidad de WebGL (punto 19 del maestro). --- */
 .scene4__globe {
   position: relative;
-  width: 260px;
-  height: 260px;
-  transform-style: preserve-3d;
+  width: min(58vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  background: var(--color-mist);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 30px 70px rgba(23, 23, 26, 0.14);
 }
 
-.scene4__meridian {
+.scene4__globe:active {
+  cursor: grabbing;
+}
+
+.scene4__map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  aspect-ratio: 4 / 1;
+  will-change: transform;
+}
+
+.scene4__continents {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scene4__continents path {
+  fill: var(--color-brand-blue);
+  fill-opacity: 0.22;
+  stroke: var(--color-brand-blue);
+  stroke-opacity: 0.4;
+  stroke-width: 2;
+}
+
+/* Sombreado radial: sugiere curvatura de esfera sobre un plano 2D —
+   realce claro arriba-izquierda, viñeta oscura en el borde. */
+.scene4__globe-shade {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--color-grey-mid);
-  opacity: 0.35;
-}
-
-.scene4__parallel {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid var(--color-grey-mid);
-  opacity: 0.35;
-}
-
-.scene4__arc {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55) 0%, transparent 45%),
+    radial-gradient(circle at 68% 78%, rgba(15, 23, 42, 0.18) 0%, transparent 55%),
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(15, 23, 42, 0.22) 100%);
 }
 
 .scene4__plane {
@@ -77,8 +98,10 @@
   left: 0;
   top: 0;
   opacity: 0;
+  z-index: 2;
   transform-origin: center;
   filter: drop-shadow(0 4px 8px rgba(23, 23, 26, 0.2));
+  pointer-events: none;
 }
 
 .scene4__marker {
@@ -86,33 +109,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   background: none;
   border: none;
   cursor: pointer;
   padding: var(--space-1);
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .scene4__name {
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 600;
   color: var(--color-ink);
   white-space: nowrap;
+  text-shadow: 0 1px 6px var(--color-mist), 0 0 10px var(--color-mist);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+/* Los nombres solo aparecen al interactuar — con varios mercados muy
+   próximos entre sí (España/Portugal) mostrarlos siempre solapaba el
+   texto; así el globo queda más limpio y el nombre se revela al tocar. */
+.scene4__marker:hover .scene4__name,
+.scene4__marker.is-active .scene4__name {
+  opacity: 1;
 }
 
 .scene4__dot {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background: var(--color-brand-blue);
-  box-shadow: 0 0 0 4px var(--color-white);
+  box-shadow: 0 0 0 3px var(--color-mist);
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
 .scene4__marker.is-active .scene4__dot {
   background: var(--color-brand-orange);
-  transform: scale(1.3);
+  transform: scale(1.35);
 }
 
 .scene4__card {

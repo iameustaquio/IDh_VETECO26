@@ -10,6 +10,15 @@
   perspective: 1600px;
 }
 
+/* Meseta de nitidez entre escenas: espacio "muerto" en el flujo normal del
+   documento entre un shell y el siguiente. Como la escena siguiente no
+   tiene pin propio todavía, su posición depende del scroll bruto — este
+   hueco retrasa cuánto tarda en empezar a asomar por abajo, dando tiempo a
+   leer la escena fijada sin que la próxima ya esté entrando en cuadro. */
+.scene-gap {
+  height: 45vh;
+}
+
 .scene {
   height: 100%;
   width: 100%;

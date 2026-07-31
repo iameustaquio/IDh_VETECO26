@@ -57,7 +57,10 @@ export function Home() {
         ScrollTrigger.create({
           trigger: shellEl,
           start: "top top",
-          end: "+=100%",
+          // +=145% en vez de +=100%: los 45 puntos extra cubren el
+          // .scene-gap insertado en el JSX antes de la siguiente escena —
+          // ver nota de la meseta más abajo.
+          end: "+=145%",
           pin: true,
           pinSpacing: false,
           // Con pinSpacing:false, la escena siguiente ocupa la misma caja en
@@ -71,14 +74,27 @@ export function Home() {
           },
         });
 
+        // La meseta de nitidez ("solo se lee bien parado en el punto
+        // exacto", feedback del cliente) no se consigue retrasando el blur
+        // por su cuenta: mientras el shell está fijado, el siguiente sigue
+        // en flujo normal y empieza a asomar por abajo desde el primer
+        // píxel de scroll (pinSpacing:false). Si el blur se retrasa pero
+        // el asomo no, se ven un instante dos escenas nítidas a la vez.
+        // La meseta real viene del <div className="scene-gap"> del JSX:
+        // un hueco muerto en el flujo que retrasa CUÁNDO empieza a asomar
+        // la siguiente escena. Este tween, en cambio, vuelve a ir en
+        // sincronía total con ese asomo (start:"top bottom", igual que
+        // antes) — por construcción, cubre justo el tramo en el que la
+        // siguiente escena entra en cuadro, sea cual sea el largo del hueco.
         gsap.fromTo(
           sceneEl,
-          { scale: 1, y: 0, rotateX: 0, filter: "blur(0px) brightness(1)" },
+          { scale: 1, x: 0, y: 0, rotateX: 0, filter: "blur(0px) brightness(1)" },
           {
-            scale: 0.8,
-            y: -60,
-            rotateX: -10,
-            filter: "blur(7px) brightness(0.7)",
+            scale: 0.82,
+            x: -30,
+            y: -70,
+            rotateX: -12,
+            filter: "blur(8px) brightness(0.65)",
             ease: "none",
             scrollTrigger: {
               trigger: shells[i + 1].current,
@@ -107,15 +123,19 @@ export function Home() {
       <div className="scene-shell" ref={shell1Ref}>
         <Scene1Umbral sceneRef={scene1Ref} />
       </div>
+      <div className="scene-gap" aria-hidden="true" />
       <div className="scene-shell" ref={shell2Ref}>
         <Scene2Problema sceneRef={scene2Ref} />
       </div>
+      <div className="scene-gap" aria-hidden="true" />
       <div className="scene-shell" ref={shell3Ref}>
         <Scene3Ingenieria sceneRef={scene3Ref} />
       </div>
+      <div className="scene-gap" aria-hidden="true" />
       <div className="scene-shell" ref={shell4Ref}>
         <Scene4Escala sceneRef={scene4Ref} />
       </div>
+      <div className="scene-gap" aria-hidden="true" />
       <div className="scene-shell" ref={shell5Ref}>
         <Scene5Cierre sceneRef={scene5Ref} />
       </div>

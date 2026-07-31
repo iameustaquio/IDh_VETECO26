@@ -9,19 +9,76 @@
     },
     "scene3": {
       "title": "Se ve simple. No lo es.",
-      "callout": "Sistema de cierre multipunto",
-      "callouts": [
+      "callout": "Toca un punto para descubrir el detalle",
+      "products": [
         {
-          "title": "Aluminio de gran calidad",
-          "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 7 mm."
+          "name": "CR603",
+          "callouts": [
+            {
+              "title": "Aluminio de gran calidad",
+              "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 7 mm."
+            },
+            {
+              "title": "Varios grados de enclavamiento",
+              "text": "Posiciones de la manilla a varios grados de enclavamiento."
+            },
+            {
+              "title": "Versión con llave — CR603K",
+              "text": "Dispone la versión de la manilla con llave para un extra de seguridad. Rápido sistema de bloqueo de la llave."
+            }
+          ]
         },
         {
-          "title": "Varios grados de enclavamiento",
-          "text": "Posiciones de la manilla a varios grados de enclavamiento."
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Aplicaciones",
+              "text": "Diseñada para carpinterías de cámara europea, permiten su uso para apertura derecha o izquierda. Aplicable en sistemas de apertura practicable interior."
+            },
+            {
+              "title": "Características",
+              "text": "Existen tres posibles distancias entre los ejes de sujeción: 84, 98 y 104 mm."
+            }
+          ]
         },
         {
-          "title": "Versión con llave — CR603K",
-          "text": "Dispone la versión de la manilla con llave para un extra de seguridad. Rápido sistema de bloqueo de la llave."
+          "name": "CR606 — Manilla elevable",
+          "callouts": [
+            {
+              "title": "Aplicaciones",
+              "text": "Manilla para puertas correderas elevables. Su mango largo facilita la apertura y cierre en puertas correderas de gran tamaño y peso."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 10 mm. Ensayada en 25.000 ciclos con puertas de 400 kg de peso."
+            }
+          ]
+        },
+        {
+          "name": "CR603-D / CR603-I",
+          "callouts": [
+            {
+              "title": "Aplicaciones",
+              "text": "Manilla acodada diseñada para puertas de corredera en línea con cierre multipunto. También compatibles para oscilobatientes con mecanismo de cuadradillo."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 7 mm. Manilla con 8 posiciones de enclavamiento (cada 45°). El desplazamiento de la manilla evita accidentes en la maniobra de cierre de algunos sistemas perimetrales."
+            }
+          ]
+        },
+        {
+          "name": "JM6 — Juego de manubrios",
+          "callouts": [
+            {
+              "title": "Aplicaciones",
+              "text": "Juego de manubrios recuperables mediante muelle de retorno. Diseñado para instalar en puertas practicables de aluminio, dispone de opción de añadir una cerradura."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricado en aluminio de gran calidad, con cuadradillo de 8 mm de acero zincado. Incluye tornillos de fijación. Tapa giratoria para ocultar los tornillos de fijación."
+            }
+          ]
         }
       ]
     },
@@ -31,7 +88,7 @@
       "markets": ["España", "Portugal", "México", "Estados Unidos", "Oriente Medio"],
       "marketDetails": [
         "Sede y planta de fabricación en Dos Hermanas (Sevilla). Red de distribuidores especialmente activa en Andalucía, Castilla-La Mancha, Extremadura, Madrid, Cataluña, Canarias y Baleares.",
-        "Uno de los primeros mercados de exportación desde la fundación de la empresa, junto con Israel y Grecia.",
+        "Uno de los primeros mercados de exportación desde la fundación de la empresa.",
         "Referente de IDh en el continente americano. Producto estrella en la región: RU-1802IN3, carro tándem en zamak con acabado de cataforesis, para hojas de hasta 280 kg.",
         "Mercado reforzado en los últimos años. Producto estrella en la región: TI1967, kit de tirador para puerta corredera con uñero y cerradura, en zamak.",
         "Mercado reforzado en los últimos años. Proyecto destacado: Five Luxe Hotel, Dubái."

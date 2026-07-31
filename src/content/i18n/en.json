@@ -10,19 +10,76 @@
     },
     "scene3": {
       "title": "It looks simple. It isn't.",
-      "callout": "Multi-point locking system",
-      "callouts": [
+      "callout": "Touch a point to see the detail",
+      "products": [
         {
-          "title": "High quality aluminium",
-          "text": "Handle made of high quality aluminium, with a 7 mm zinc-plated steel spindle."
+          "name": "CR603",
+          "callouts": [
+            {
+              "title": "High quality aluminium",
+              "text": "Handle made of high quality aluminium, with a 7 mm zinc-plated steel spindle."
+            },
+            {
+              "title": "Several locking positions",
+              "text": "Locking positions at several degrees of the handle."
+            },
+            {
+              "title": "Key-locking version — CR603K",
+              "text": "We also have the same handle with key lock for an extra of security. Fast and easy lock system."
+            }
+          ]
         },
         {
-          "title": "Several locking positions",
-          "text": "Locking positions at several degrees of the handle."
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Applications",
+              "text": "Designed for European chamber aluminium carpentries, usable for right or left opening. Applicable on inward-opening hinged systems."
+            },
+            {
+              "title": "Features",
+              "text": "Three possible distances between fixing axes: 84, 98 and 104 mm."
+            }
+          ]
         },
         {
-          "title": "Key-locking version — CR603K",
-          "text": "We also have the same handle with key lock for an extra of security. Fast and easy lock system."
+          "name": "CR606 — Lift-and-slide handle",
+          "callouts": [
+            {
+              "title": "Applications",
+              "text": "Handle for lift-and-slide doors. Its long grip makes opening and closing large, heavy sliding doors easier."
+            },
+            {
+              "title": "Features",
+              "text": "Made of high quality aluminium, with a 10 mm zinc-plated steel spindle. Tested through 25,000 cycles with 400 kg doors."
+            }
+          ]
+        },
+        {
+          "name": "CR603-D / CR603-I",
+          "callouts": [
+            {
+              "title": "Applications",
+              "text": "Angled handle designed for in-line sliding doors with multi-point locking. Also compatible with tilt-and-turn systems using a spindle mechanism."
+            },
+            {
+              "title": "Features",
+              "text": "Made of high quality aluminium, with a 7 mm zinc-plated steel spindle. Handle with 8 locking positions (every 45°). The handle's movement prevents accidents during the closing operation of some perimeter systems."
+            }
+          ]
+        },
+        {
+          "name": "JM6 — Handle set",
+          "callouts": [
+            {
+              "title": "Applications",
+              "text": "Spring-return handle set. Designed to be installed on aluminium hinged doors, with the option of adding a lock."
+            },
+            {
+              "title": "Features",
+              "text": "Made of high quality aluminium, with an 8 mm zinc-plated spindle. Includes fixing screws. Rotating cap to hide the fixing screws."
+            }
+          ]
         }
       ]
     },
@@ -32,7 +89,7 @@
       "markets": ["Spain", "Portugal", "Mexico", "United States", "Middle East"],
       "marketDetails": [
         "Headquarters and manufacturing plant in Dos Hermanas (Seville). Distributor network especially active in Andalusia, Castilla-La Mancha, Extremadura, Madrid, Catalonia, the Canary Islands and the Balearic Islands.",
-        "One of the company's first export markets since its founding, together with Israel and Greece.",
+        "One of the company's first export markets since its founding.",
         "IDh's benchmark market in the Americas. Regional flagship product: RU-1802IN3, a zamak tandem carriage with cataphoresis finish, for panels up to 280 kg.",
         "A market reinforced in recent years. Regional flagship product: TI1967, a sliding door handle kit with hook and lock, in zamak.",
         "A market reinforced in recent years. Featured project: Five Luxe Hotel, Dubai."

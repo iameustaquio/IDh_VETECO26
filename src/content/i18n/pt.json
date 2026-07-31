@@ -10,19 +10,76 @@
     },
     "scene3": {
       "title": "Parece simples. Não é.",
-      "callout": "Sistema de fecho multiponto",
-      "callouts": [
+      "callout": "Toque num ponto para ver o detalhe",
+      "products": [
         {
-          "title": "Alumínio de grande qualidade",
-          "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm."
+          "name": "CR603",
+          "callouts": [
+            {
+              "title": "Alumínio de grande qualidade",
+              "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm."
+            },
+            {
+              "title": "Vários graus de fecho",
+              "text": "Posições da maçaneta em vários graus de fecho."
+            },
+            {
+              "title": "Versão com chave — CR603K",
+              "text": "Dispõe da versão da maçaneta com chave para segurança extra. Sistema de bloqueio da chave rápido e fácil."
+            }
+          ]
         },
         {
-          "title": "Vários graus de fecho",
-          "text": "Posições da maçaneta em vários graus de fecho."
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Aplicações",
+              "text": "Desenhada para caixilharias de câmara europeia, permite o seu uso para abertura direita ou esquerda. Aplicável em sistemas de abertura oscilante interior."
+            },
+            {
+              "title": "Características",
+              "text": "Existem três distâncias possíveis entre os eixos de fixação: 84, 98 e 104 mm."
+            }
+          ]
         },
         {
-          "title": "Versão com chave — CR603K",
-          "text": "Dispõe da versão da maçaneta com chave para segurança extra. Sistema de bloqueio da chave rápido e fácil."
+          "name": "CR606 — Maçaneta elevável",
+          "callouts": [
+            {
+              "title": "Aplicações",
+              "text": "Maçaneta para portas de correr eleváveis. O seu punho longo facilita a abertura e o fecho em portas de correr de grande tamanho e peso."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 10 mm. Testada em 25.000 ciclos com portas de 400 kg de peso."
+            }
+          ]
+        },
+        {
+          "name": "CR603-D / CR603-I",
+          "callouts": [
+            {
+              "title": "Aplicações",
+              "text": "Maçaneta cotovelada desenhada para portas de correr em linha com fecho multiponto. Também compatível com sistemas oscilobatentes com mecanismo de quadradinho."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm. Maçaneta com 8 posições de fecho (a cada 45°). O deslocamento da maçaneta evita acidentes na manobra de fecho de alguns sistemas perimetrais."
+            }
+          ]
+        },
+        {
+          "name": "JM6 — Conjunto de puxadores",
+          "callouts": [
+            {
+              "title": "Aplicações",
+              "text": "Conjunto de puxadores recuperáveis por mola de retorno. Desenhado para instalar em portas oscilantes de alumínio, com opção de adicionar uma fechadura."
+            },
+            {
+              "title": "Características",
+              "text": "Fabricado em alumínio de grande qualidade, com quadradinho de 8 mm de aço zincado. Inclui parafusos de fixação. Tampa giratória para ocultar os parafusos de fixação."
+            }
+          ]
         }
       ]
     },
@@ -32,7 +89,7 @@
       "markets": ["Espanha", "Portugal", "México", "Estados Unidos", "Médio Oriente"],
       "marketDetails": [
         "Sede e fábrica em Dos Hermanas (Sevilha). Rede de distribuidores especialmente ativa na Andaluzia, Castela-Mancha, Estremadura, Madrid, Catalunha, Ilhas Canárias e Ilhas Baleares.",
-        "Um dos primeiros mercados de exportação desde a fundação da empresa, junto com Israel e Grécia.",
+        "Um dos primeiros mercados de exportação desde a fundação da empresa.",
         "Mercado de referência da IDh no continente americano. Produto em destaque na região: RU-1802IN3, carro tandem em zamak com acabamento de cataforese, para folhas até 280 kg.",
         "Mercado reforçado nos últimos anos. Produto em destaque na região: TI1967, kit de puxador para porta de correr com fecho, em zamak.",
         "Mercado reforçado nos últimos anos. Projeto em destaque: Five Luxe Hotel, Dubai."
