@@ -39,15 +39,15 @@ function geoToWorld({ lon, lat }) {
 }
 
 // Contorno de cada continente como una lista de puntos de referencia
-// (posiciones geográficas reconocibles — cabo, golfo, península — no una
-// costa exacta) suavizados con curvas a través de sus puntos medios, un
-// truco clásico para conseguir siluetas de "blob" con aspecto natural a
-// partir de una lista de vértices simple. Sin acceso a internet en este
-// entorno no hay forma de traer un dataset real de costas, así que estas
-// coordenadas están construidas a mano a partir de referencias
-// geográficas conocidas (mismo espacio 1200×600 que geoToWorld) para que
-// los marcadores caigan sobre su continente real, no sobre cualquier
-// mancha genérica.
+// (cabos, golfos, penínsulas reconocibles — no una costa exacta),
+// definidos en lon/lat y pasados por geoToWorld — la misma proyección
+// que usan los marcadores, así que un continente y sus marcadores nunca
+// pueden desalinearse entre sí aunque se ajusten las coordenadas. Sin
+// acceso a internet en este entorno no hay forma de traer un dataset
+// real de costas (world-atlas/Natural Earth), así que siguen siendo
+// referencias geográficas construidas a mano, verificadas por código
+// (test de punto en polígono) para que cada marcador caiga dentro de su
+// continente real con margen, no sobre cualquier mancha genérica.
 // Catmull-Rom → Bézier: a diferencia de un simple suavizado por puntos
 // medios (que recorta las puntas y difumina rasgos como Florida o el
 // Cuerno de África), esta curva pasa EXACTAMENTE por cada punto de
@@ -70,42 +70,60 @@ function smoothPath(points) {
   return `${d}Z`;
 }
 
-const CONTINENT_POINTS = [
-  // América del Norte
+// Puntos de referencia por continente como [lon, lat] — cabos, golfos,
+// penínsulas reconocibles — pasados por la MISMA proyección que los
+// marcadores (geoToWorld), así que ambos comparten el mismo sistema de
+// coordenadas y no pueden desalinearse entre sí.
+const CONTINENT_GEO_POINTS = [
+  // América del Norte (incluye México hasta el sur)
   [
-    [40, 85], [110, 55], [230, 50], [330, 60], [400, 100], [423, 143],
-    [400, 190], [334, 217], [300, 205], [283, 203], [285, 255], [265, 265],
-    [240, 260], [220, 270], [190, 240], [160, 190], [130, 140], [90, 100],
+    [-165, 62], [-163, 68], [-150, 71], [-141, 70], [-100, 73], [-75, 63],
+    [-64, 50], [-53, 47], [-67, 45], [-75, 36], [-80, 26], [-90, 29],
+    [-97, 26], [-97, 20], [-90, 15], [-105, 20], [-110, 23], [-115, 29],
+    [-124, 40], [-124, 48], [-130, 55],
   ],
   // América del Sur
   [
-    [344, 273], [380, 290], [430, 300], [483, 317], [470, 360], [440, 420],
-    [410, 460], [390, 483], [373, 483], [365, 450], [355, 400], [345, 340],
-    [335, 300],
+    [-77, 8], [-58, 8], [-48, 0], [-35, -8], [-38, -16], [-43, -23],
+    [-48, -28], [-57, -35], [-62, -42], [-68, -50], [-70, -55], [-72, -50],
+    [-73, -40], [-71, -30], [-75, -15], [-81, -6], [-79, 2],
   ],
   // Europa
   [
-    [555, 200], [560, 170], [580, 150], [593, 120], [610, 90], [640, 70],
-    [667, 63], [650, 110], [673, 170], [660, 150], [620, 180],
+    [-9.5, 43], [-2, 47], [3, 51], [8, 55], [10, 59], [18, 66], [25, 71],
+    [35, 68], [55, 60], [52, 48], [35, 47], [23, 38], [13, 41], [9, 40],
+    [4, 43], [-9.5, 36], [-10.8, 39], [-9.8, 42],
   ],
   // África
   [
-    [580, 190], [600, 210], [650, 215], [700, 220], [720, 250], [770, 267],
-    [730, 290], [700, 320], [670, 370], [660, 413], [630, 400], [610, 350],
-    [617, 283], [590, 260], [570, 230],
+    [-6, 35], [10, 37], [20, 33], [33, 31], [35, 27], [43, 12], [51, 12],
+    [49, 5], [41, -3], [40, -12], [35, -20], [33, -25], [27, -33],
+    [18, -34], [14, -22], [12, -9], [13, 2], [9, 4], [-3, 5], [-10, 9],
+    [-17, 15], [-16, 21],
   ],
-  // Asia
+  // Asia (incluye península arábiga e India)
   [
-    [717, 170], [750, 150], [800, 100], [900, 70], [1000, 55], [1100, 60],
-    [1167, 67], [1140, 120], [1060, 180], [1000, 200], [953, 260], [900, 280],
-    [857, 273], [820, 240], [790, 200], [795, 218], [745, 245], [720, 200],
+    [30, 42], [35, 40], [40, 41], [48, 45], [55, 42], [60, 55], [65, 70],
+    [80, 73], [100, 76], [130, 74], [145, 70], [160, 62], [163, 58],
+    [140, 50], [142, 45], [131, 43], [122, 35], [121, 31], [108, 22],
+    [108, 10], [103, 2], [95, 5], [92, 16], [88, 22], [80, 13], [77, 8],
+    [73, 20], [68, 24], [61, 25], [58, 27], [57, 15], [48, 30], [44, 33],
+    [35, 37],
   ],
   // Oceanía (Australia)
   [
-    [930, 380], [977, 373], [1030, 370], [1083, 400], [1083, 427], [1020, 440],
-    [960, 420],
+    [113, -22], [122, -18], [131, -12], [135, -12], [142, -11], [145, -17],
+    [149, -21], [153, -28], [150, -34], [147, -38], [140, -38], [136, -35],
+    [131, -32], [115, -34], [113, -26],
   ],
 ];
+
+const CONTINENT_POINTS = CONTINENT_GEO_POINTS.map((pts) =>
+  pts.map(([lon, lat]) => {
+    const { x, y } = geoToWorld({ lon, lat });
+    return [x, y];
+  }),
+);
 
 const CONTINENT_PATHS = CONTINENT_POINTS.map(smoothPath);
 
@@ -117,16 +135,11 @@ export function Scene4Escala({ sceneRef }) {
   const stageRef = useRef(null);
   const globeRef = useRef(null);
   const mapRef = useRef(null);
-  const planeRef = useRef(null);
-  const planePos = useRef(null);
+  const flightPathRef = useRef(null);
+  const flightPlaneRef = useRef(null);
+  const flightTween = useRef(null);
   const idleTween = useRef(null);
   const dragState = useRef({ dragging: false, startX: 0, startTranslate: 0, moved: 0 });
-  const markerRefs = useRef([]);
-
-  const setMarkerRef = (i, copy) => (el) => {
-    if (!markerRefs.current[i]) markerRefs.current[i] = [];
-    markerRefs.current[i][copy] = el;
-  };
 
   const worldPx = () => (mapRef.current?.getBoundingClientRect().width ?? 0) / 2;
 
@@ -198,37 +211,62 @@ export function Scene4Escala({ sceneRef }) {
     startIdleSpin();
   };
 
-  const flyPlaneTo = (i, copy) => {
-    const targetEl = markerRefs.current[i]?.[copy];
-    if (!targetEl || !stageRef.current) return;
-    const stageRect = stageRef.current.getBoundingClientRect();
-    const markerRect = targetEl.getBoundingClientRect();
-    const end = {
-      x: markerRect.left - stageRect.left + markerRect.width / 2,
-      y: markerRect.top - stageRect.top + markerRect.height / 2,
-    };
-    const start = planePos.current ?? { x: stageRect.width / 2, y: stageRect.height + 30 };
-    const lift = Math.min(start.y, end.y) - 90;
+  // La ruta de vuelo sale siempre de España (nuestra sede) hacia el país
+  // clicado — nunca al revés y nunca entre dos países que no sean España,
+  // así que solo hace falta un único trazo/avión reutilizado en cada clic,
+  // no una gestión de múltiples rutas simultáneas.
+  const hideFlight = () => {
+    flightTween.current?.kill();
+    if (!flightPathRef.current || !flightPlaneRef.current) return;
+    gsap.to([flightPathRef.current, flightPlaneRef.current], { opacity: 0, duration: 0.3 });
+  };
 
-    gsap.to(planeRef.current, { opacity: 1, duration: 0.2 });
-    gsap.to(planeRef.current, {
-      motionPath: {
-        path: [start, { x: (start.x + end.x) / 2, y: lift }, end],
-        curviness: 1.4,
-        autoRotate: true,
-      },
-      duration: 0.9,
-      ease: "power2.inOut",
-    });
-    planePos.current = end;
+  const drawFlightTo = (i, copy) => {
+    const path = flightPathRef.current;
+    const plane = flightPlaneRef.current;
+    if (!path || !plane || i === 0) return;
+
+    const origin = geoToWorld(MARKET_GEO[0]);
+    const dest = geoToWorld(MARKET_GEO[i]);
+    const end = { x: dest.x + copy * WORLD_W, y: dest.y };
+    // España también vive en dos copias del mapa (mismo truco de scroll
+    // infinito) — se elige la copia de España más cercana a la copia del
+    // país clicado, no necesariamente la misma "copy", para que la ruta
+    // sea siempre el trazo corto y visible, nunca el que cruza medio mapa.
+    const originCopy = Math.abs(origin.x - end.x) <= Math.abs(origin.x + WORLD_W - end.x) ? 0 : 1;
+    const start = { x: origin.x + originCopy * WORLD_W, y: origin.y };
+    const lift = Math.min(start.y, end.y) - Math.max(60, Math.abs(end.x - start.x) * 0.18);
+    const mid = { x: (start.x + end.x) / 2, y: lift };
+    const d = `M ${start.x} ${start.y} Q ${mid.x} ${mid.y} ${end.x} ${end.y}`;
+
+    flightTween.current?.kill();
+    path.setAttribute("d", d);
+    const length = path.getTotalLength();
+    const duration = Math.min(1.6, Math.max(0.8, length / 900));
+
+    gsap.set(path, { opacity: 1, strokeDasharray: "9 7", strokeDashoffset: length });
+    gsap.set(plane, { opacity: 1 });
+
+    flightTween.current = gsap
+      .timeline()
+      .to(path, { strokeDashoffset: 0, duration, ease: "power1.inOut" }, 0)
+      .to(
+        plane,
+        { motionPath: { path, autoRotate: true, alignOrigin: [0.5, 0.5] }, duration, ease: "power1.inOut" },
+        0,
+      )
+      .to([path, plane], { opacity: 0, duration: 0.5 }, "+=0.8");
   };
 
   const handleMarkerClick = (i, copy) => {
     if (dragState.current.moved > DRAG_CLICK_THRESHOLD) return;
     const next = active === i ? null : i;
     setActive(next);
-    if (next === null) return;
-    flyPlaneTo(i, copy);
+    if (next === null || next === 0) {
+      hideFlight();
+      return;
+    }
+    drawFlightTo(next, copy);
   };
 
   return (
@@ -256,9 +294,19 @@ export function Scene4Escala({ sceneRef }) {
               <use href="#scene4-landmasses" x="0" />
               <use href="#scene4-landmasses" x={WORLD_W} />
             </svg>
+            <svg
+              className="scene4__flight"
+              viewBox={`0 0 ${WORLD_W * 2} ${WORLD_H}`}
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path className="scene4__flight-path" ref={flightPathRef} d="" />
+              <path className="scene4__flight-plane" ref={flightPlaneRef} d="M -11 0 L 8 -7 L 0 0 L 8 7 Z" />
+            </svg>
             {MARKET_GEO.map((geo, i) => {
               const { x, y } = geoToWorld(geo);
               const top = `${(y / WORLD_H) * 100}%`;
+              const isHome = i === 0;
               return [0, 1].map((copy) => {
                 const worldX = x + copy * WORLD_W;
                 const left = `${(worldX / (WORLD_W * 2)) * 100}%`;
@@ -266,13 +314,13 @@ export function Scene4Escala({ sceneRef }) {
                   <button
                     type="button"
                     key={`${i}-${copy}`}
-                    className={`scene4__marker${active === i ? " is-active" : ""}`}
+                    className={`scene4__marker${isHome ? " scene4__marker--home" : ""}${active === i ? " is-active" : ""}`}
                     style={{ left, top }}
-                    ref={setMarkerRef(i, copy)}
                     onClick={() => handleMarkerClick(i, copy)}
                     onPointerDown={(e) => e.stopPropagation()}
+                    aria-label={t.home.scene4.markets[i]}
                   >
-                    <span className="scene4__dot" />
+                    {isHome ? <span className="scene4__home-icon" /> : <span className="scene4__dot" />}
                     <span className="scene4__name">{t.home.scene4.markets[i]}</span>
                   </button>
                 );
@@ -281,9 +329,6 @@ export function Scene4Escala({ sceneRef }) {
           </div>
           <div className="scene4__globe-shade" />
         </div>
-        <svg className="scene4__plane" ref={planeRef} viewBox="0 0 24 24" width="22" height="22">
-          <path d="M2 12l19-8-6 8 6 8-19-8zm4.5 0l6.2 2.6L14 12l-1.3-2.6L6.5 12z" fill="var(--color-brand-orange)" />
-        </svg>
       </div>
       <div className={`scene4__card${active !== null ? " is-visible" : ""}`}>
         {active !== null && (
