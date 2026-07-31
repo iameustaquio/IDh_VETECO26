@@ -54,13 +54,34 @@ export function Home() {
     const shells = [shell1Ref, shell2Ref, shell3Ref, shell4Ref, shell5Ref];
 
     const ctx = gsap.context(() => {
+      // GSAP envuelve cada shell fijado en su propio <div class="pin-spacer">
+      // (aunque pinSpacing:false no le añada espacio extra) y le copia
+      // position/z-index — pero NUNCA su pointer-events. Tocar solo el
+      // shell interior (como hacía antes este mismo onToggle) deja ese
+      // spacer siempre en pointer-events:auto de fábrica; como cada shell
+      // siguiente tiene mayor z-index, su spacer (invisible pero presente)
+      // queda por delante del anterior en cualquier zona donde se solapen
+      // — típicamente la mitad inferior de la escena activa, justo donde
+      // viven los puntos/controles — y se queda con el clic aunque su
+      // contenido real esté clipeado a nada. Sincronizar el spacer con su
+      // shell en el mismo gsap.set es lo que de verdad soluciona "el
+      // clicado a veces falla", no solo el shell.
+      const setPointerEvents = (el, value) => {
+        gsap.set(el, { pointerEvents: value });
+        const parent = el?.parentElement;
+        if (parent?.classList.contains("pin-spacer")) gsap.set(parent, { pointerEvents: value });
+      };
+
       shells.forEach((shellRef, i) => {
         const shellEl = shellRef.current;
         const sceneEl = scenes[i].current;
         const isLast = i === shells.length - 1;
-        gsap.set(shellEl, { zIndex: i + 1, pointerEvents: i === 0 ? "auto" : "none" });
+        gsap.set(shellEl, { zIndex: i + 1 });
 
-        if (isLast) return;
+        if (isLast) {
+          setPointerEvents(shellEl, i === 0 ? "auto" : "none");
+          return;
+        }
 
         ScrollTrigger.create({
           trigger: shellEl,
@@ -77,10 +98,16 @@ export function Home() {
           // clic en la escena de debajo. Solo la escena realmente activa
           // debe recibir eventos de puntero.
           onToggle: (self) => {
-            gsap.set(shellEl, { pointerEvents: self.isActive ? "auto" : "none" });
-            gsap.set(shells[i + 1].current, { pointerEvents: self.isActive ? "none" : "auto" });
+            setPointerEvents(shellEl, self.isActive ? "auto" : "none");
+            setPointerEvents(shells[i + 1].current, self.isActive ? "none" : "auto");
           },
         });
+
+        // Llamada DESPUÉS de crear el ScrollTrigger: el pin-spacer de este
+        // shell no existe todavía antes de esta línea (ScrollTrigger.create
+        // es quien lo inserta), así que solo aquí setPointerEvents ya
+        // puede encontrarlo y sincronizarlo desde el primer render.
+        setPointerEvents(shellEl, i === 0 ? "auto" : "none");
 
         // La meseta de nitidez ("solo se lee bien parado en el punto
         // exacto", feedback del cliente) no se consigue retrasando el blur

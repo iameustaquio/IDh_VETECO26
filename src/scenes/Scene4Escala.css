@@ -94,9 +94,9 @@
 }
 
 /* Ruta de vuelo: sale siempre de España hacia el país clicado. El trazo
-   discontinuo se "dibuja" animando stroke-dashoffset con un patrón de
-   guiones fijo (en vez de revelar una línea sólida), y el avión recorre
-   el mismo <path> vía MotionPathPlugin, así que ambos avanzan a la par. */
+   discontinuo se "dibuja" de inicio a fin animando stroke-dashoffset con
+   un patrón de guiones fijo (en vez de revelar una línea sólida ya
+   completa) — solo la línea, sin avión (feedback del cliente). */
 .scene4__flight {
   position: absolute;
   inset: 0;
@@ -112,11 +112,6 @@
   stroke: var(--color-brand-orange);
   stroke-width: 2.5;
   stroke-linecap: round;
-  opacity: 0;
-}
-
-.scene4__flight-plane {
-  fill: var(--color-brand-orange);
   opacity: 0;
 }
 

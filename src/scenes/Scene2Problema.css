@@ -8,6 +8,16 @@
   position: absolute;
   inset: -6% 0;
   overflow: hidden;
+  /* pan-y: el navegador gestiona de forma nativa cualquier gesto
+     vertical (scroll de la página — la navegación principal del sitio),
+     dejando solo el horizontal disponible para el arrastre propio de
+     deslizar entre imágenes. */
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.scene2__image-wrap:active {
+  cursor: grabbing;
 }
 
 .scene2__image {
@@ -18,6 +28,8 @@
   object-fit: cover;
   transform-origin: center;
   will-change: transform, filter, opacity;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .scene2__message {
