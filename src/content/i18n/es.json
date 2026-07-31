@@ -8,9 +8,22 @@
       "message": "Cada apertura, cada cierre, cada carpintería tiene una exigencia distinta."
     },
     "scene3": {
-      "title": "Se ve simple. No lo es.",
+      "title": "Es elegante. Es funcional. Es NEO.",
       "callout": "Toca un punto para descubrir el detalle",
       "products": [
+        {
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Aplicaciones",
+              "text": "Diseñada para carpinterías de cámara europea, permiten su uso para apertura derecha o izquierda. Aplicable en sistemas de apertura practicable interior."
+            },
+            {
+              "title": "Características",
+              "text": "Existen tres posibles distancias entre los ejes de sujeción: 84, 98 y 104 mm."
+            }
+          ]
+        },
         {
           "name": "CR603",
           "callouts": [
@@ -29,15 +42,15 @@
           ]
         },
         {
-          "name": "CR601 — Cremona Neo",
+          "name": "CR603-D / CR603-I",
           "callouts": [
             {
               "title": "Aplicaciones",
-              "text": "Diseñada para carpinterías de cámara europea, permiten su uso para apertura derecha o izquierda. Aplicable en sistemas de apertura practicable interior."
+              "text": "Manilla acodada diseñada para puertas de corredera en línea con cierre multipunto. También compatibles para oscilobatientes con mecanismo de cuadradillo."
             },
             {
               "title": "Características",
-              "text": "Existen tres posibles distancias entre los ejes de sujeción: 84, 98 y 104 mm."
+              "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 7 mm. Manilla con 8 posiciones de enclavamiento (cada 45°). El desplazamiento de la manilla evita accidentes en la maniobra de cierre de algunos sistemas perimetrales."
             }
           ]
         },
@@ -51,19 +64,6 @@
             {
               "title": "Características",
               "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 10 mm. Ensayada en 25.000 ciclos con puertas de 400 kg de peso."
-            }
-          ]
-        },
-        {
-          "name": "CR603-D / CR603-I",
-          "callouts": [
-            {
-              "title": "Aplicaciones",
-              "text": "Manilla acodada diseñada para puertas de corredera en línea con cierre multipunto. También compatibles para oscilobatientes con mecanismo de cuadradillo."
-            },
-            {
-              "title": "Características",
-              "text": "Fabricada en aluminio de gran calidad, con cuadradillo de acero zincado de 7 mm. Manilla con 8 posiciones de enclavamiento (cada 45°). El desplazamiento de la manilla evita accidentes en la maniobra de cierre de algunos sistemas perimetrales."
             }
           ]
         },

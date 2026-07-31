@@ -9,9 +9,22 @@
       "message": "Every opening, every closing, every window frame has its own demands."
     },
     "scene3": {
-      "title": "It looks simple. It isn't.",
+      "title": "It's elegant. It's functional. It's NEO.",
       "callout": "Touch a point to see the detail",
       "products": [
+        {
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Applications",
+              "text": "Designed for European chamber aluminium carpentries, usable for right or left opening. Applicable on inward-opening hinged systems."
+            },
+            {
+              "title": "Features",
+              "text": "Three possible distances between fixing axes: 84, 98 and 104 mm."
+            }
+          ]
+        },
         {
           "name": "CR603",
           "callouts": [
@@ -30,15 +43,15 @@
           ]
         },
         {
-          "name": "CR601 — Cremona Neo",
+          "name": "CR603-D / CR603-I",
           "callouts": [
             {
               "title": "Applications",
-              "text": "Designed for European chamber aluminium carpentries, usable for right or left opening. Applicable on inward-opening hinged systems."
+              "text": "Angled handle designed for in-line sliding doors with multi-point locking. Also compatible with tilt-and-turn systems using a spindle mechanism."
             },
             {
               "title": "Features",
-              "text": "Three possible distances between fixing axes: 84, 98 and 104 mm."
+              "text": "Made of high quality aluminium, with a 7 mm zinc-plated steel spindle. Handle with 8 locking positions (every 45°). The handle's movement prevents accidents during the closing operation of some perimeter systems."
             }
           ]
         },
@@ -52,19 +65,6 @@
             {
               "title": "Features",
               "text": "Made of high quality aluminium, with a 10 mm zinc-plated steel spindle. Tested through 25,000 cycles with 400 kg doors."
-            }
-          ]
-        },
-        {
-          "name": "CR603-D / CR603-I",
-          "callouts": [
-            {
-              "title": "Applications",
-              "text": "Angled handle designed for in-line sliding doors with multi-point locking. Also compatible with tilt-and-turn systems using a spindle mechanism."
-            },
-            {
-              "title": "Features",
-              "text": "Made of high quality aluminium, with a 7 mm zinc-plated steel spindle. Handle with 8 locking positions (every 45°). The handle's movement prevents accidents during the closing operation of some perimeter systems."
             }
           ]
         },

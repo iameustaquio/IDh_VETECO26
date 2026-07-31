@@ -9,9 +9,22 @@
       "message": "Cada abertura, cada fecho, cada caixilharia tem uma exigência diferente."
     },
     "scene3": {
-      "title": "Parece simples. Não é.",
+      "title": "É elegante. É funcional. É NEO.",
       "callout": "Toque num ponto para ver o detalhe",
       "products": [
+        {
+          "name": "CR601 — Cremona Neo",
+          "callouts": [
+            {
+              "title": "Aplicações",
+              "text": "Desenhada para caixilharias de câmara europeia, permite o seu uso para abertura direita ou esquerda. Aplicável em sistemas de abertura oscilante interior."
+            },
+            {
+              "title": "Características",
+              "text": "Existem três distâncias possíveis entre os eixos de fixação: 84, 98 e 104 mm."
+            }
+          ]
+        },
         {
           "name": "CR603",
           "callouts": [
@@ -30,15 +43,15 @@
           ]
         },
         {
-          "name": "CR601 — Cremona Neo",
+          "name": "CR603-D / CR603-I",
           "callouts": [
             {
               "title": "Aplicações",
-              "text": "Desenhada para caixilharias de câmara europeia, permite o seu uso para abertura direita ou esquerda. Aplicável em sistemas de abertura oscilante interior."
+              "text": "Maçaneta cotovelada desenhada para portas de correr em linha com fecho multiponto. Também compatível com sistemas oscilobatentes com mecanismo de quadradinho."
             },
             {
               "title": "Características",
-              "text": "Existem três distâncias possíveis entre os eixos de fixação: 84, 98 e 104 mm."
+              "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm. Maçaneta com 8 posições de fecho (a cada 45°). O deslocamento da maçaneta evita acidentes na manobra de fecho de alguns sistemas perimetrais."
             }
           ]
         },
@@ -52,19 +65,6 @@
             {
               "title": "Características",
               "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 10 mm. Testada em 25.000 ciclos com portas de 400 kg de peso."
-            }
-          ]
-        },
-        {
-          "name": "CR603-D / CR603-I",
-          "callouts": [
-            {
-              "title": "Aplicações",
-              "text": "Maçaneta cotovelada desenhada para portas de correr em linha com fecho multiponto. Também compatível com sistemas oscilobatentes com mecanismo de quadradinho."
-            },
-            {
-              "title": "Características",
-              "text": "Fabricada em alumínio de grande qualidade, com quadradinho de aço zincado de 7 mm. Maçaneta com 8 posições de fecho (a cada 45°). O deslocamento da maçaneta evita acidentes na manobra de fecho de alguns sistemas perimetrais."
             }
           ]
         },

@@ -20,6 +20,14 @@ gsap.registerPlugin(ScrollTrigger);
 // literal de su ficha técnica — sin añadidos.
 const PRODUCTS = [
   {
+    image: cr601Image,
+    alt: "IDh CR601 — Cremona Neo",
+    positions: [
+      { top: "16%", left: "54%" },
+      { top: "58%", left: "60%" },
+    ],
+  },
+  {
     image: cr603Image,
     thumb: cr603kImage,
     thumbCalloutIndex: 2,
@@ -31,11 +39,11 @@ const PRODUCTS = [
     ],
   },
   {
-    image: cr601Image,
-    alt: "IDh CR601 — Cremona Neo",
+    image: cr603dImage,
+    alt: "IDh CR603-D — manilla acodada multipunto",
     positions: [
-      { top: "16%", left: "54%" },
-      { top: "58%", left: "60%" },
+      { top: "18%", left: "38%" },
+      { top: "62%", left: "66%" },
     ],
   },
   {
@@ -44,14 +52,6 @@ const PRODUCTS = [
     positions: [
       { top: "14%", left: "56%" },
       { top: "64%", left: "50%" },
-    ],
-  },
-  {
-    image: cr603dImage,
-    alt: "IDh CR603-D — manilla acodada multipunto",
-    positions: [
-      { top: "18%", left: "38%" },
-      { top: "62%", left: "66%" },
     ],
   },
   {
@@ -77,6 +77,7 @@ export function Scene3Ingenieria({ sceneRef }) {
   const orbitTween = useRef(null);
   const posTween = useRef(null);
   const posRef = useRef(0);
+  const targetRef = useRef(0);
   const spacingRef = useRef(300);
   const dragState = useRef({ dragging: false, startX: 0, startPos: 0, moved: 0 });
   calloutRefs.current = [];
@@ -125,6 +126,7 @@ export function Scene3Ingenieria({ sceneRef }) {
   useLayoutEffect(() => {
     updateSpacing();
     posRef.current = activeProduct;
+    targetRef.current = activeProduct;
     render(activeProduct);
     const onResize = () => {
       updateSpacing();
@@ -180,6 +182,7 @@ export function Scene3Ingenieria({ sceneRef }) {
 
   const settleTo = (index) => {
     const clamped = Math.max(0, Math.min(PRODUCTS.length - 1, index));
+    targetRef.current = clamped;
     posTween.current?.kill();
     const obj = { v: posRef.current };
     posTween.current = gsap.to(obj, {
@@ -220,7 +223,12 @@ export function Scene3Ingenieria({ sceneRef }) {
     settleTo(Math.round(posRef.current));
   };
 
-  const changeProduct = (next) => settleTo(next);
+  // Se basa en targetRef (el destino "en vuelo"), no en el activeProduct
+  // confirmado — este último solo se actualiza al completar la animación
+  // (medio segundo después), así que clicar las flechas varias veces
+  // seguidas antes de que termine acumulaba siempre el mismo destino en
+  // vez de avanzar un paso más por cada clic.
+  const changeProduct = (direction) => settleTo(targetRef.current + direction);
 
   const handleCalloutClick = (i) => {
     if (dragState.current.moved > DRAG_CLICK_THRESHOLD) return;
@@ -246,7 +254,7 @@ export function Scene3Ingenieria({ sceneRef }) {
           type="button"
           className="scene3__nav scene3__nav--prev"
           onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => changeProduct(activeProduct - 1)}
+          onClick={() => changeProduct(-1)}
           aria-label="Anterior"
         >
           ‹
@@ -273,7 +281,7 @@ export function Scene3Ingenieria({ sceneRef }) {
           type="button"
           className="scene3__nav scene3__nav--next"
           onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => changeProduct(activeProduct + 1)}
+          onClick={() => changeProduct(1)}
           aria-label="Siguiente"
         >
           ›
