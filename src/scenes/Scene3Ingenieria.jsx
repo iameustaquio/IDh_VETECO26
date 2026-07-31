@@ -242,7 +242,13 @@ export function Scene3Ingenieria({ sceneRef }) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <button type="button" className="scene3__nav scene3__nav--prev" onClick={() => changeProduct(activeProduct - 1)} aria-label="Anterior">
+        <button
+          type="button"
+          className="scene3__nav scene3__nav--prev"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => changeProduct(activeProduct - 1)}
+          aria-label="Anterior"
+        >
           ‹
         </button>
         {PRODUCTS.map((p, i) => (
@@ -263,7 +269,13 @@ export function Scene3Ingenieria({ sceneRef }) {
               ))}
           </div>
         ))}
-        <button type="button" className="scene3__nav scene3__nav--next" onClick={() => changeProduct(activeProduct + 1)} aria-label="Siguiente">
+        <button
+          type="button"
+          className="scene3__nav scene3__nav--next"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => changeProduct(activeProduct + 1)}
+          aria-label="Siguiente"
+        >
           ›
         </button>
       </div>

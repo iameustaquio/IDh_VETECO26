@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [claude/idh-herrajes-landing-e2mx4a]
+    branches:
+      - claude/idh-herrajes-landing-e2mx4a
+      - claude/veteco26-status-review-vzhnah
   workflow_dispatch:
 
 permissions:
