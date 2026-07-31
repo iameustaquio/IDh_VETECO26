@@ -4,7 +4,12 @@
 }
 
 .scene-shell {
+  /* dvh en vez de vh: en móvil, vh se calcula con la barra de
+     direcciones oculta, así que el contenido se corta al cargar con la
+     barra visible. dvh se ajusta en vivo al viewport real. Fallback a vh
+     para navegadores sin soporte (se sobrescribe si dvh existe). */
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   position: relative;
   perspective: 1600px;
@@ -17,6 +22,7 @@
    leer la escena fijada sin que la próxima ya esté entrando en cuadro. */
 .scene-gap {
   height: 45vh;
+  height: 45dvh;
 }
 
 .scene {

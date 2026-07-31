@@ -104,6 +104,31 @@ export function Home() {
             },
           },
         );
+
+        // Corte diagonal en el borde de entrada de la siguiente escena —
+        // en vez de un simple borde horizontal recto (que se sentía como
+        // una tarjeta desvaneciéndose), la escena entrante se revela con
+        // un filo inclinado tipo "cuchilla", el lenguaje visual típico de
+        // un wipe worldscroll. Va en el SHELL (no en la escena interior:
+        // ese elemento ya lleva el tween de escala/blur de arriba —
+        // mezclar transform y clip-path en el mismo elemento no genera el
+        // conflicto de dos pines, pero mantenerlos separados evita
+        // cualquier sorpresa) y comparte el mismo disparador que el
+        // resto, así que el filo y el blur avanzan exactamente a la par.
+        gsap.fromTo(
+          shells[i + 1].current,
+          { clipPath: "polygon(0% 14%, 100% 0%, 100% 100%, 0% 100%)" },
+          {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: shells[i + 1].current,
+              start: "top bottom",
+              end: "top top",
+              scrub: true,
+            },
+          },
+        );
       });
 
       // Nota: se probó un snap global a los límites de cada escena (progreso

@@ -38,14 +38,76 @@ function geoToWorld({ lon, lat }) {
   };
 }
 
-const CONTINENT_PATHS = [
-  "M 130 110 C 100 90 140 60 190 65 C 230 60 260 80 290 75 C 320 90 300 130 320 150 C 340 180 300 200 310 230 C 290 260 260 240 240 260 C 220 290 190 270 180 240 C 150 220 140 190 120 170 C 100 150 110 125 130 110 Z",
-  "M 260 300 C 290 290 320 300 330 330 C 350 360 340 400 350 440 C 355 470 335 500 310 510 C 290 520 270 500 265 470 C 255 430 240 390 245 350 C 245 325 250 310 260 300 Z",
-  "M 540 110 C 560 95 590 100 610 110 C 625 120 615 140 600 150 C 615 165 600 180 580 175 C 560 185 545 170 540 150 C 525 140 530 120 540 110 Z",
-  "M 545 195 C 580 185 620 190 640 210 C 660 240 650 280 655 320 C 660 360 640 400 615 420 C 595 435 575 415 570 390 C 555 360 540 330 535 295 C 525 260 530 225 545 195 Z",
-  "M 655 90 C 700 70 760 65 820 75 C 880 60 950 70 1000 90 C 1030 105 1010 130 1020 150 C 1040 170 1015 190 1030 210 C 1010 230 980 220 960 235 C 940 260 900 250 880 270 C 860 290 830 275 815 255 C 790 260 770 240 760 215 C 730 210 700 200 685 175 C 660 160 645 130 655 90 Z",
-  "M 930 400 C 960 390 1000 395 1020 415 C 1035 435 1020 460 995 465 C 965 470 935 455 925 430 C 918 415 920 405 930 400 Z",
+// Contorno de cada continente como una lista de puntos de referencia
+// (posiciones geográficas reconocibles — cabo, golfo, península — no una
+// costa exacta) suavizados con curvas a través de sus puntos medios, un
+// truco clásico para conseguir siluetas de "blob" con aspecto natural a
+// partir de una lista de vértices simple. Sin acceso a internet en este
+// entorno no hay forma de traer un dataset real de costas, así que estas
+// coordenadas están construidas a mano a partir de referencias
+// geográficas conocidas (mismo espacio 1200×600 que geoToWorld) para que
+// los marcadores caigan sobre su continente real, no sobre cualquier
+// mancha genérica.
+// Catmull-Rom → Bézier: a diferencia de un simple suavizado por puntos
+// medios (que recorta las puntas y difumina rasgos como Florida o el
+// Cuerno de África), esta curva pasa EXACTAMENTE por cada punto de
+// referencia, así que las siluetas conservan sus rasgos distintivos.
+function smoothPath(points) {
+  const n = points.length;
+  const at = (i) => points[((i % n) + n) % n];
+  let d = `M ${points[0][0]} ${points[0][1]} `;
+  for (let i = 0; i < n; i++) {
+    const p0 = at(i - 1);
+    const p1 = at(i);
+    const p2 = at(i + 1);
+    const p3 = at(i + 2);
+    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += `C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${p2[0]} ${p2[1]} `;
+  }
+  return `${d}Z`;
+}
+
+const CONTINENT_POINTS = [
+  // América del Norte
+  [
+    [40, 85], [110, 55], [230, 50], [330, 60], [400, 100], [423, 143],
+    [400, 190], [334, 217], [300, 205], [283, 203], [285, 255], [265, 265],
+    [240, 260], [220, 270], [190, 240], [160, 190], [130, 140], [90, 100],
+  ],
+  // América del Sur
+  [
+    [344, 273], [380, 290], [430, 300], [483, 317], [470, 360], [440, 420],
+    [410, 460], [390, 483], [373, 483], [365, 450], [355, 400], [345, 340],
+    [335, 300],
+  ],
+  // Europa
+  [
+    [555, 200], [560, 170], [580, 150], [593, 120], [610, 90], [640, 70],
+    [667, 63], [650, 110], [673, 170], [660, 150], [620, 180],
+  ],
+  // África
+  [
+    [580, 190], [600, 210], [650, 215], [700, 220], [720, 250], [770, 267],
+    [730, 290], [700, 320], [670, 370], [660, 413], [630, 400], [610, 350],
+    [617, 283], [590, 260], [570, 230],
+  ],
+  // Asia
+  [
+    [717, 170], [750, 150], [800, 100], [900, 70], [1000, 55], [1100, 60],
+    [1167, 67], [1140, 120], [1060, 180], [1000, 200], [953, 260], [900, 280],
+    [857, 273], [820, 240], [790, 200], [795, 218], [745, 245], [720, 200],
+  ],
+  // Oceanía (Australia)
+  [
+    [930, 380], [977, 373], [1030, 370], [1083, 400], [1083, 427], [1020, 440],
+    [960, 420],
+  ],
 ];
+
+const CONTINENT_PATHS = CONTINENT_POINTS.map(smoothPath);
 
 const DRAG_CLICK_THRESHOLD = 6;
 

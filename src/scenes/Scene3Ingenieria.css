@@ -14,40 +14,57 @@
   color: var(--color-ink);
 }
 
-.scene3__body {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
+/* Carrusel "coverflow": la manilla activa flota centrada sin caja ni
+   fondo blanco detrás; las vecinas asoman más pequeñas y desenfocadas a
+   los lados. Cada .scene3__slide se posiciona a sí mismo vía JS
+   (transform x/scale/rotateY/blur) en función de su distancia al índice
+   activo, recalculada en cada frame mientras se arrastra. */
+.scene3__carousel {
+  position: relative;
+  width: 100%;
+  height: clamp(300px, 55vh, 460px);
+  perspective: 1400px;
+  touch-action: pan-y;
+  cursor: grab;
 }
 
-.scene3__stage {
-  position: relative;
-  width: min(24vw, 340px);
-  aspect-ratio: 3 / 4;
-  background: var(--color-white);
-  flex-shrink: 0;
+.scene3__carousel:active {
+  cursor: grabbing;
+}
+
+.scene3__slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(140px, 30vw, 220px);
+  height: clamp(280px, 52vh, 460px);
+  margin-left: clamp(-110px, -15vw, -70px);
+  margin-top: clamp(-230px, -26vh, -140px);
+  will-change: transform, filter;
+  pointer-events: none;
 }
 
 .scene3__image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  will-change: transform;
+  pointer-events: none;
+  user-select: none;
 }
 
 .scene3__nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
-  width: 32px;
-  height: 32px;
+  z-index: 200;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: none;
   background: var(--color-white);
   box-shadow: 0 6px 16px rgba(23, 23, 26, 0.14);
   color: var(--color-ink);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
   transition: transform var(--duration-fast) var(--ease-out);
@@ -58,11 +75,11 @@
 }
 
 .scene3__nav--prev {
-  left: -14px;
+  left: var(--space-2);
 }
 
 .scene3__nav--next {
-  right: -14px;
+  right: var(--space-2);
 }
 
 .scene3__callout {
@@ -75,6 +92,7 @@
   background: var(--color-white);
   transform: translate(-50%, -50%);
   cursor: pointer;
+  pointer-events: auto;
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
@@ -106,37 +124,17 @@
   border-color: var(--color-brand-orange);
 }
 
-/* El panel de tarjetas tiene altura fija y las tarjetas se posicionan en
-   uno de tres "huecos" (arriba/medio/abajo) según qué callout las abrió,
-   en vez de aparecer siempre en el mismo sitio. */
-.scene3__card-area {
-  position: relative;
-  width: min(28vw, 340px);
-  height: 420px;
-}
-
 .scene3__card {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  min-height: 130px;
+  position: relative;
+  width: min(90vw, 420px);
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: var(--space-2);
   border-radius: 4px;
-  background: transparent;
-  box-shadow: none;
-  transition:
-    background var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    top var(--duration-base) var(--ease-out);
-}
-
-.scene3__card.is-visible {
   background: var(--color-white);
   box-shadow: 0 16px 40px rgba(23, 23, 26, 0.14);
+  text-align: left;
 }
 
 .scene3__card h3 {
@@ -161,13 +159,6 @@
   align-self: flex-start;
 }
 
-.scene3__card-empty {
-  font-family: var(--font-ui);
-  font-size: var(--fs-body);
-  color: var(--color-grey-mid);
-  text-align: center;
-}
-
 .scene3__card-close {
   position: absolute;
   top: var(--space-2);
@@ -180,34 +171,4 @@
   line-height: 1;
   color: var(--color-grey-mid);
   cursor: pointer;
-}
-
-.scene3__dots {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2);
-  max-width: min(70vw, 700px);
-}
-
-.scene3__dot {
-  padding: var(--space-1) var(--space-3);
-  border-radius: 999px;
-  border: 1px solid var(--color-grey-mid);
-  background: transparent;
-  font-family: var(--font-ui);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-graphite);
-  cursor: pointer;
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
-}
-
-.scene3__dot.is-active {
-  background: var(--color-brand-blue);
-  border-color: var(--color-brand-blue);
-  color: var(--color-white);
 }

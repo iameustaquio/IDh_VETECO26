@@ -25,6 +25,10 @@ h2,
 h3,
 p {
   margin: 0;
+  /* Triplex/Arial Black tiene glifos altos; "normal" del navegador queda
+     demasiado apretado en cuanto un título envuelve a dos líneas (se
+     solapan en pantallas estrechas) — se fija un mínimo cómodo. */
+  line-height: 1.25;
 }
 
 button {

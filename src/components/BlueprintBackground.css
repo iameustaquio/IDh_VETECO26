@@ -28,49 +28,94 @@
   fill: none;
 }
 
-.blueprint__pulse {
-  animation: blueprint-pulse var(--bp-duration, 8s) ease-in-out infinite;
+.blueprint__dim {
+  stroke: var(--color-brand-orange);
+  stroke-opacity: 0.4;
+  stroke-width: 1.2;
+  fill: none;
+}
+
+/* Trazo real: dashoffset recorre el largo exacto de la línea (--bp-len,
+   calculado en JS) — se dibuja de inicio a fin, se mantiene y se retrae
+   en la misma dirección, en vez de aparecer de golpe con un fundido. */
+.blueprint__draw {
+  stroke-dasharray: var(--bp-len);
+  stroke-dashoffset: var(--bp-len);
+  animation: blueprint-draw var(--bp-duration, 8s) ease-in-out infinite;
   animation-delay: var(--bp-delay, 0s);
 }
 
-@keyframes blueprint-pulse {
-  0%,
-  100% {
-    opacity: 0;
+@keyframes blueprint-draw {
+  0% {
+    stroke-dashoffset: var(--bp-len);
   }
-  35%,
-  65% {
-    opacity: 1;
+  30% {
+    stroke-dashoffset: 0;
+  }
+  62% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: calc(-1 * var(--bp-len));
   }
 }
 
-.blueprint__dim {
-  stroke: var(--color-brand-orange);
-  stroke-opacity: 0.32;
-  stroke-width: 1;
-  fill: none;
+.blueprint__fade {
+  animation: blueprint-fade var(--bp-duration, 8s) ease-in-out infinite;
+  animation-delay: var(--bp-delay, 0s);
+}
+
+@keyframes blueprint-fade {
+  0%,
+  28% {
+    opacity: 0;
+  }
+  38%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.blueprint__materialize {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blueprint-materialize var(--bp-duration, 10s) ease-in-out infinite;
+  animation-delay: var(--bp-delay, 0s);
+}
+
+@keyframes blueprint-materialize {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  15%,
+  75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
 }
 
 .blueprint__arc {
   fill: var(--color-brand-blue);
-  fill-opacity: 0.06;
+  fill-opacity: 0.07;
   stroke: var(--color-brand-blue);
-  stroke-opacity: 0.3;
+  stroke-opacity: 0.32;
   stroke-width: 1;
-}
-
-.blueprint__arrowhead {
-  fill: none;
-  stroke: var(--color-brand-orange);
-  stroke-opacity: 0.55;
-  stroke-width: 1.5;
 }
 
 .blueprint__dim-label {
   font-family: var(--font-data);
   font-size: 13px;
   fill: var(--color-brand-orange);
-  fill-opacity: 0.5;
+  fill-opacity: 0.55;
   text-anchor: middle;
 }
 
@@ -80,4 +125,24 @@
   fill: var(--color-brand-blue);
   fill-opacity: 0.4;
   text-anchor: middle;
+}
+
+.blueprint__block line {
+  stroke: var(--color-brand-blue);
+  stroke-opacity: 0.28;
+  stroke-width: 1;
+  fill: none;
+}
+
+.blueprint__callout-dot {
+  fill: var(--color-brand-orange);
+  fill-opacity: 0.6;
+}
+
+.blueprint__callout-label {
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  fill: var(--color-ink);
+  fill-opacity: 0.45;
 }

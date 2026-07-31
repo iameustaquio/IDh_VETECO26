@@ -59,7 +59,7 @@ export function Scene1Umbral({ sceneRef }) {
         <img ref={logoRef} className="scene1__logo" src={logoIdh} alt="IDh — Innovación y Desarrollo de herrajes" />
         <p className="scene1__message" ref={wordsRef}>
           {t.home.scene1.message.split(" ").map((word, i) => (
-            <span key={i}>{word}&nbsp;</span>
+            <span key={i}>{word} </span>
           ))}
         </p>
       </div>

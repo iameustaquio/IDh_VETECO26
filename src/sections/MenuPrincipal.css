@@ -1,5 +1,6 @@
 .menu-principal {
   height: 100vh;
+  height: 100dvh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -7,6 +8,7 @@
   justify-content: center;
   gap: var(--space-5);
   background: var(--color-mist);
+  padding: var(--space-6) var(--grid-margin);
 }
 
 .menu-principal__controls {
@@ -26,15 +28,22 @@
   font-size: 0.9rem;
 }
 
+/* auto-fit + minmax: en pantallas anchas caben las 5 tarjetas en una
+   fila; en móvil, la rejilla reparte en 2-3 columnas en vez de forzar
+   un ancho mínimo de 900px (5×180px) que desbordaba en cualquier
+   pantalla estrecha. */
 .menu-principal__grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(120px, 180px));
+  justify-content: center;
   gap: var(--space-3);
+  max-width: 100%;
 }
 
 .menu-principal__card {
-  width: 180px;
-  height: 180px;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 180px;
   display: flex;
   align-items: center;
   justify-content: center;

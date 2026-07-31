@@ -12,18 +12,12 @@ import "./Scene3Ingenieria.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Escena 3 — La ingeniería detrás (documento 03). Es la única escena del
-// HOME donde el documento pide una cámara 3D real (WebGL) sobre la pieza.
-// Sin modelos 3D disponibles todavía, se resuelve con un carrusel de
-// fotografías de producto reales (recortadas de fichas técnicas, fondo
-// eliminado) + callouts progresivos. El texto de cada callout es literal
-// de su ficha técnica — sin añadidos.
-//
-// Cada producto trae sus propias posiciones de callout (coordenadas % del
-// punto sobre la fotografía) porque la silueta de cada manilla es
-// distinta. Las tarjetas, en cambio, usan un mismo conjunto de 3
-// "huecos" fijos dentro del panel — feedback del cliente: que cada
-// callout abra su tarjeta en un sitio distinto, no siempre en el mismo.
+// Escena 3 — La ingeniería detrás (documento 03). Carrusel tipo
+// "coverflow": la manilla activa flota centrada (sin caja ni fondo
+// blanco detrás — feedback del cliente) y las vecinas asoman más
+// pequeñas y desenfocadas a los lados; se navega arrastrando
+// horizontalmente (o con las flechas). El texto de cada callout es
+// literal de su ficha técnica — sin añadidos.
 const PRODUCTS = [
   {
     image: cr603Image,
@@ -70,21 +64,76 @@ const PRODUCTS = [
   },
 ];
 
-const CARD_SLOTS = [{ top: "0%" }, { top: "37%" }, { top: "74%" }];
+const DRAG_CLICK_THRESHOLD = 6;
 
 export function Scene3Ingenieria({ sceneRef }) {
   const { t } = useLanguage();
   const [activeProduct, setActiveProduct] = useState(0);
   const [activeCallout, setActiveCallout] = useState(null);
   const calloutRefs = useRef([]);
-  const imageRef = useRef(null);
+  const slideRefs = useRef([]);
+  const carouselRef = useRef(null);
   const cardRef = useRef(null);
   const orbitTween = useRef(null);
+  const posTween = useRef(null);
+  const posRef = useRef(0);
+  const spacingRef = useRef(300);
+  const dragState = useRef({ dragging: false, startX: 0, startPos: 0, moved: 0 });
   calloutRefs.current = [];
 
   const addCalloutRef = (el) => {
     if (el) calloutRefs.current.push(el);
   };
+  const setSlideRef = (i) => (el) => {
+    slideRefs.current[i] = el;
+  };
+
+  // El espaciado entre manillas se calcula a partir del ancho real del
+  // carrusel (no un valor fijo en px) para que en pantallas estrechas las
+  // vecinas sigan asomando sin desbordar — clamp entre un mínimo legible
+  // y un máximo para no dispersarlas demasiado en pantallas muy anchas.
+  const updateSpacing = () => {
+    const w = carouselRef.current?.clientWidth ?? 900;
+    spacingRef.current = Math.max(130, Math.min(300, w * 0.28));
+  };
+
+  // Aplica la posición/escala/blur de cada manilla a partir de una
+  // posición continua (puede ser fraccionaria mientras se arrastra) —
+  // así el efecto "coverflow" se recalcula en cada frame del arrastre en
+  // vez de solo saltar entre estados discretos.
+  const render = (pos) => {
+    const spacing = spacingRef.current;
+    slideRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const d = i - pos;
+      const ad = Math.abs(d);
+      const scale = Math.max(0.62, 1 - 0.22 * ad);
+      const blur = Math.min(9, ad * 3.6);
+      const opacity = Math.max(0.18, 1 - 0.4 * ad);
+      const rotateY = Math.max(-32, Math.min(32, d * -20));
+      gsap.set(el, {
+        x: d * spacing,
+        scale,
+        opacity,
+        rotateY,
+        filter: `blur(${blur}px)`,
+        zIndex: 100 - Math.round(ad * 10),
+      });
+    });
+  };
+
+  useLayoutEffect(() => {
+    updateSpacing();
+    posRef.current = activeProduct;
+    render(activeProduct);
+    const onResize = () => {
+      updateSpacing();
+      render(posRef.current);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -106,13 +155,12 @@ export function Scene3Ingenieria({ sceneRef }) {
     return () => ctx.revert();
   }, [sceneRef]);
 
-  // Flotación suave y continua de la fotografía activa — pequeño balanceo
-  // vertical + inclinación, para que la pieza se sienta "viva" en reposo
-  // en vez de una imagen estática (feedback del cliente).
+  // Flotación suave y continua de la manilla activa.
   useLayoutEffect(() => {
-    orbitTween.current = gsap.to(imageRef.current, {
+    const el = slideRefs.current[activeProduct];
+    if (!el) return undefined;
+    orbitTween.current = gsap.to(el, {
       y: -10,
-      rotateZ: 1.4,
       duration: 3.2,
       ease: "sine.inOut",
       yoyo: true,
@@ -130,75 +178,107 @@ export function Scene3Ingenieria({ sceneRef }) {
     );
   }, [activeCallout, activeProduct]);
 
-  const changeProduct = (next) => {
-    const total = PRODUCTS.length;
-    const nextIndex = (next + total) % total;
-    setActiveProduct(nextIndex);
-    setActiveCallout(null);
-    gsap.fromTo(imageRef.current, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" });
+  const settleTo = (index) => {
+    const clamped = Math.max(0, Math.min(PRODUCTS.length - 1, index));
+    posTween.current?.kill();
+    const obj = { v: posRef.current };
+    posTween.current = gsap.to(obj, {
+      v: clamped,
+      duration: 0.5,
+      ease: "power3.out",
+      onUpdate: () => {
+        posRef.current = obj.v;
+        render(obj.v);
+      },
+      onComplete: () => {
+        posRef.current = clamped;
+        setActiveProduct(clamped);
+        setActiveCallout(null);
+      },
+    });
   };
 
-  const product = PRODUCTS[activeProduct];
-  const productNames = t.home.scene3.products.map((p) => p.name);
+  const onPointerDown = (e) => {
+    posTween.current?.kill();
+    orbitTween.current?.kill();
+    dragState.current = { dragging: true, startX: e.clientX, startPos: posRef.current, moved: 0 };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e) => {
+    if (!dragState.current.dragging) return;
+    const delta = e.clientX - dragState.current.startX;
+    dragState.current.moved = Math.max(dragState.current.moved, Math.abs(delta));
+    const pos = dragState.current.startPos - delta / spacingRef.current;
+    posRef.current = pos;
+    render(pos);
+  };
+
+  const onPointerUp = () => {
+    if (!dragState.current.dragging) return;
+    dragState.current.dragging = false;
+    settleTo(Math.round(posRef.current));
+  };
+
+  const changeProduct = (next) => settleTo(next);
+
+  const handleCalloutClick = (i) => {
+    if (dragState.current.moved > DRAG_CLICK_THRESHOLD) return;
+    setActiveCallout(activeCallout === i ? null : i);
+  };
+
   const callouts = t.home.scene3.products[activeProduct].callouts;
   const active = activeCallout === null ? null : callouts[activeCallout];
-  const slot = activeCallout === null ? CARD_SLOTS[0] : CARD_SLOTS[activeCallout % CARD_SLOTS.length];
+  const activeProductData = PRODUCTS[activeProduct];
 
   return (
     <section className="scene scene--3" ref={sceneRef}>
       <h2 className="scene3__title">{t.home.scene3.title}</h2>
-      <div className="scene3__body">
-        <div className="scene3__stage">
-          <button type="button" className="scene3__nav scene3__nav--prev" onClick={() => changeProduct(activeProduct - 1)} aria-label="Anterior">
-            ‹
-          </button>
-          <img ref={imageRef} className="scene3__image" src={product.image} alt={product.alt} />
-          {product.positions.map((pos, i) => (
-            <button
-              key={`${activeProduct}-${i}`}
-              type="button"
-              className={`scene3__callout${activeCallout === i ? " is-active" : ""}`}
-              style={pos}
-              ref={addCalloutRef}
-              onClick={() => setActiveCallout(activeCallout === i ? null : i)}
-              aria-label={callouts[i]?.title}
-            />
-          ))}
-          <button type="button" className="scene3__nav scene3__nav--next" onClick={() => changeProduct(activeProduct + 1)} aria-label="Siguiente">
-            ›
-          </button>
-        </div>
-        <div className="scene3__card-area">
-          <div className={`scene3__card${active ? " is-visible" : ""}`} style={slot} ref={cardRef}>
-            {active ? (
-              <>
-                <button type="button" className="scene3__card-close" onClick={() => setActiveCallout(null)} aria-label="Cerrar">
-                  ×
-                </button>
-                {product.thumb && activeCallout === product.thumbCalloutIndex && (
-                  <img className="scene3__card-thumb" src={product.thumb} alt={`${product.alt} — variante`} />
-                )}
-                <h3>{active.title}</h3>
-                <p>{active.text}</p>
-              </>
-            ) : (
-              <p className="scene3__card-empty">{t.home.scene3.callout}</p>
-            )}
+      <div
+        className="scene3__carousel"
+        ref={carouselRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+      >
+        <button type="button" className="scene3__nav scene3__nav--prev" onClick={() => changeProduct(activeProduct - 1)} aria-label="Anterior">
+          ‹
+        </button>
+        {PRODUCTS.map((p, i) => (
+          <div className="scene3__slide" key={p.image} ref={setSlideRef(i)}>
+            <img className="scene3__image" src={p.image} alt={p.alt} draggable="false" />
+            {i === activeProduct &&
+              p.positions.map((pos, ci) => (
+                <button
+                  key={`${activeProduct}-${ci}`}
+                  type="button"
+                  className={`scene3__callout${activeCallout === ci ? " is-active" : ""}`}
+                  style={pos}
+                  ref={addCalloutRef}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => handleCalloutClick(ci)}
+                  aria-label={callouts[ci]?.title}
+                />
+              ))}
           </div>
-        </div>
-      </div>
-      <div className="scene3__dots">
-        {productNames.map((name, i) => (
-          <button
-            key={name}
-            type="button"
-            className={`scene3__dot${i === activeProduct ? " is-active" : ""}`}
-            onClick={() => changeProduct(i)}
-          >
-            {name}
-          </button>
         ))}
+        <button type="button" className="scene3__nav scene3__nav--next" onClick={() => changeProduct(activeProduct + 1)} aria-label="Siguiente">
+          ›
+        </button>
       </div>
+      {active && (
+        <div className="scene3__card is-visible" ref={cardRef}>
+          <button type="button" className="scene3__card-close" onClick={() => setActiveCallout(null)} aria-label="Cerrar">
+            ×
+          </button>
+          {activeProductData.thumb && activeCallout === activeProductData.thumbCalloutIndex && (
+            <img className="scene3__card-thumb" src={activeProductData.thumb} alt={`${activeProductData.alt} — variante`} />
+          )}
+          <h3>{active.title}</h3>
+          <p>{active.text}</p>
+        </div>
+      )}
     </section>
   );
 }
