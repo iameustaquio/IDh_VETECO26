@@ -13,6 +13,27 @@
   width: 100%;
   position: relative;
   perspective: 1600px;
+  --sheen-x: -130%;
+}
+
+/* Brillo diagonal que GSAP anima vía --sheen-x mientras se destapa la
+   escena (Home.jsx) — el clip-path del propio shell ya lo recorta a la
+   zona revelada, así que solo se ve "correr" por donde el filo ya pasó. */
+.scene-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.22) 47%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.22) 53%,
+    transparent 68%
+  );
+  transform: translateX(var(--sheen-x));
 }
 
 /* Meseta de nitidez entre escenas: espacio "muerto" en el flujo normal del

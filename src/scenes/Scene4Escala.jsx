@@ -301,7 +301,11 @@ export function Scene4Escala({ sceneRef }) {
               aria-hidden="true"
             >
               <path className="scene4__flight-path" ref={flightPathRef} d="" />
-              <path className="scene4__flight-plane" ref={flightPlaneRef} d="M -11 0 L 8 -7 L 0 0 L 8 7 Z" />
+              {/* Morro (punta) en +x: autoRotate de MotionPathPlugin asume que a
+                  0° de rotación la forma ya apunta hacia +x — dibujarla al
+                  revés (morro en -x) hace que el avión apunte siempre en
+                  sentido contrario al trazo, sea cual sea el país. */}
+              <path className="scene4__flight-plane" ref={flightPlaneRef} d="M 11 0 L -8 -7 L 0 0 L -8 7 Z" />
             </svg>
             {MARKET_GEO.map((geo, i) => {
               const { x, y } = geoToWorld(geo);

@@ -12,9 +12,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Lag (en segundos) del scrub de las transiciones entre escenas — un
 // scrub:true clásico ata el tween al scroll bruto 1:1; este valor deja
-// que el tween persiga esa posición con una pizca de inercia propia,
-// más "worldscroll" fluido y menos "regla milimetrada".
-const SCRUB_LAG = 0.45;
+// que el tween persiga esa posición con una inercia propia notable,
+// más "worldscroll" fluido y menos "regla milimetrada". Subido tras
+// feedback del cliente ("no me gusta nada cómo queda, necesito más
+// animación y fluidez") — 0.45 no se notaba lo suficiente.
+const SCRUB_LAG = 0.7;
 
 // HOME — cinco escenas encadenadas por scroll vertical 100% manual
 // (documento maestro, sección 24; documento 03, storyboard completo).
@@ -96,11 +98,11 @@ export function Home() {
           sceneEl,
           { scale: 1, x: 0, y: 0, rotateX: 0, filter: "blur(0px) brightness(1)" },
           {
-            scale: 0.82,
-            x: -30,
-            y: -70,
-            rotateX: -12,
-            filter: "blur(8px) brightness(0.65)",
+            scale: 0.72,
+            x: -50,
+            y: -110,
+            rotateX: -18,
+            filter: "blur(11px) brightness(0.58)",
             ease: "none",
             scrollTrigger: {
               trigger: shells[i + 1].current,
@@ -127,7 +129,7 @@ export function Home() {
         // clip-path), por la misma razón de siempre.
         gsap.fromTo(
           scenes[i + 1].current,
-          { scale: 1.05, rotateX: 4 },
+          { scale: 1.1, rotateX: 7 },
           {
             scale: 1,
             rotateX: 0,
@@ -153,9 +155,31 @@ export function Home() {
         // resto, así que el filo y el blur avanzan exactamente a la par.
         gsap.fromTo(
           shells[i + 1].current,
-          { clipPath: "polygon(0% 14%, 100% 0%, 100% 100%, 0% 100%)" },
+          { clipPath: "polygon(0% 24%, 100% 0%, 100% 100%, 0% 100%)" },
           {
             clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: shells[i + 1].current,
+              start: "top bottom",
+              end: "top top",
+              scrub: SCRUB_LAG,
+            },
+          },
+        );
+
+        // Brillo diagonal que recorre el filo mientras se destapa la
+        // escena entrante — sin él, el wipe es solo un corte geométrico;
+        // con él, se lee como una superficie que "coge la luz" al
+        // revelarse, mucho más animado. Vive en la variable CSS
+        // --sheen-x que consume el ::after de .scene-shell (Home.css):
+        // así se anima sin añadir ningún nodo ni ref nuevos, y el propio
+        // clip-path del shell ya lo recorta a la zona revelada.
+        gsap.fromTo(
+          shells[i + 1].current,
+          { "--sheen-x": "-130%" },
+          {
+            "--sheen-x": "130%",
             ease: "none",
             scrollTrigger: {
               trigger: shells[i + 1].current,
