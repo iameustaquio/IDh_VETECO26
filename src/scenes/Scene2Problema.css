@@ -20,25 +20,14 @@
   cursor: grabbing;
 }
 
-/* Envoltorio por slide: sostiene opacity/xPercent y la referencia al
-   filtro SVG de disolución (Scene2Problema.jsx) por separado de la
-   imagen interior, que sigue llevando su propio scale/blur de scroll
-   (más abajo) — mezclar ambos "filter" en el mismo elemento chocaría,
-   ya que uno anima blur() como string y el otro necesita mantener fija
-   una referencia url(#...) en la misma propiedad CSS. */
-.scene2__image-filter {
+.scene2__image {
   position: absolute;
   inset: 0;
-  will-change: opacity, transform, filter;
-}
-
-.scene2__image {
-  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transform-origin: center;
-  will-change: transform, filter;
+  will-change: transform, filter, opacity;
   user-select: none;
   -webkit-user-drag: none;
 }

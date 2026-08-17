@@ -27,10 +27,9 @@ export function Scene2Problema({ sceneRef }) {
   const { t } = useLanguage();
   const [active, setActive] = useState(0);
   const imageRefs = useRef([]);
-  const wrapperRefs = useRef([]);
-  const filterRefs = useRef([]);
   const textRef = useRef(null);
   const prevActiveRef = useRef(0);
+  const directionRef = useRef(1);
   const autoplayTimerRef = useRef(null);
   const dragRef = useRef({ active: false, confirmed: false, startX: 0, startY: 0 });
 
@@ -47,37 +46,30 @@ export function Scene2Problema({ sceneRef }) {
   const setImageRef = (i) => (el) => {
     if (el) imageRefs.current[i] = el;
   };
-  const setWrapperRef = (i) => (el) => {
-    if (el) wrapperRefs.current[i] = el;
-  };
-  const setDisplacementRef = (i) => (el) => {
-    if (!el) return;
-    filterRefs.current[i] = { ...filterRefs.current[i], displacement: el };
-  };
-  const setBlurRef = (i) => (el) => {
-    if (!el) return;
-    filterRefs.current[i] = { ...filterRefs.current[i], blur: el };
-  };
 
   const scheduleAutoplay = () => {
     clearInterval(autoplayTimerRef.current);
     if (SLIDES.length < 2) return;
     autoplayTimerRef.current = setInterval(() => {
+      directionRef.current = 1;
       setActive((i) => (i + 1) % SLIDES.length);
     }, AUTOPLAY_MS);
   };
 
   const goNext = () => {
+    directionRef.current = 1;
     setActive((i) => (i + 1) % SLIDES.length);
     scheduleAutoplay();
   };
 
   const goPrev = () => {
+    directionRef.current = -1;
     setActive((i) => (i - 1 + SLIDES.length) % SLIDES.length);
     scheduleAutoplay();
   };
 
   const handleDotClick = (i) => {
+    directionRef.current = i >= active ? 1 : -1;
     setActive(i);
     scheduleAutoplay();
   };
@@ -106,7 +98,7 @@ export function Scene2Problema({ sceneRef }) {
       }
       drag.confirmed = true;
     }
-    const el = wrapperRefs.current[active];
+    const el = imageRefs.current[active];
     if (!el) return;
     const raw = (dx / el.offsetWidth) * 100 * 0.9;
     const clamped = Math.max(-60, Math.min(60, raw));
@@ -114,7 +106,7 @@ export function Scene2Problema({ sceneRef }) {
   };
 
   const settleDrag = () => {
-    const el = wrapperRefs.current[active];
+    const el = imageRefs.current[active];
     if (el) gsap.to(el, { xPercent: 0, opacity: 1, duration: 0.4, ease: "power2.out" });
   };
 
@@ -200,49 +192,33 @@ export function Scene2Problema({ sceneRef }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Transición "disolución de arena": en vez de deslizar, la imagen
-  // saliente se desintegra en su sitio (el desplazamiento de feTurbulence
-  // la deshace en grano, a la vez que se desenfoca y se desvanece)
-  // mientras la entrante se recompone desde ese mismo caos hasta quedar
-  // nítida — sin desplazamiento lateral: es un efecto de disolución, no
-  // de barrido, así que xPercent solo se usa para devolver la imagen a 0
-  // si el gesto de arrastre la había dejado desplazada al soltar.
-  //
-  // El filtro SVG (scale de feDisplacementMap + stdDeviation de
-  // feGaussianBlur) solo se referencia en el wrapper mientras dura la
-  // transición (onStart lo activa, onComplete lo quita): un filtro SVG
-  // cuesta renderizar tenga o no distorsión visible, así que dejarlo
-  // enganchado permanentemente en las 5 imágenes — la mayoría inactivas
-  // el 100% del tiempo — desperdiciaría GPU sin ningún beneficio visual.
+  // Transición direccional: la imagen entrante desliza desde el lado hacia
+  // el que "avanzamos" (derecha si vamos a la siguiente, izquierda si
+  // vamos a la anterior) mientras la saliente continúa hacia el lado
+  // opuesto — la misma lectura de movimiento que un deslizamiento con el
+  // dedo, dispare el cambio el autoplay, un punto o un swipe. Solo toca
+  // opacity/xPercent (nunca scale/filter/yPercent, que ya controla en
+  // scroll el efecto de "reveal" de más arriba) para no pelear con ese
+  // tween mientras la escena sigue fijada en pantalla.
   useLayoutEffect(() => {
     if (SLIDES.length < 2) return undefined;
+    const dir = directionRef.current;
     const prevIndex = prevActiveRef.current;
     const tweens = [];
-    wrapperRefs.current.forEach((el, i) => {
+    imageRefs.current.forEach((el, i) => {
       if (!el) return;
-      const filters = filterRefs.current[i];
-      const disp = filters?.displacement;
-      const blur = filters?.blur;
-      const enableFilter = () => gsap.set(el, { filter: `url(#scene2-dissolve-${i})` });
-      const disableFilter = () => gsap.set(el, { filter: "none" });
-
       if (i === active) {
-        gsap.set(el, { xPercent: 0 });
-        const tl = gsap.timeline({ onStart: enableFilter, onComplete: disableFilter });
-        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 1.15, ease: "power2.out" }, 0);
-        if (disp) tl.fromTo(disp, { attr: { scale: 70 } }, { attr: { scale: 0 }, duration: 1.15, ease: "power2.out" }, 0);
-        if (blur) tl.fromTo(blur, { attr: { stdDeviation: 4 } }, { attr: { stdDeviation: 0 }, duration: 1.15, ease: "power2.out" }, 0);
-        tweens.push(tl);
+        tweens.push(
+          gsap.fromTo(
+            el,
+            { opacity: 0, xPercent: dir * 22 },
+            { opacity: 1, xPercent: 0, duration: 1.1, ease: "power3.out" },
+          ),
+        );
       } else if (i === prevIndex && prevIndex !== active) {
-        const tl = gsap.timeline({ onStart: enableFilter, onComplete: disableFilter });
-        tl.to(el, { opacity: 0, xPercent: 0, duration: 1, ease: "power2.in" }, 0);
-        if (disp) tl.to(disp, { attr: { scale: 70 }, duration: 1, ease: "power2.in" }, 0);
-        if (blur) tl.to(blur, { attr: { stdDeviation: 4 }, duration: 1, ease: "power2.in" }, 0);
-        tweens.push(tl);
+        tweens.push(gsap.to(el, { opacity: 0, xPercent: -dir * 22, duration: 0.95, ease: "power2.inOut" }));
       } else {
-        gsap.set(el, { opacity: 0, xPercent: 0, filter: "none" });
-        if (disp) gsap.set(disp, { attr: { scale: 0 } });
-        if (blur) gsap.set(blur, { attr: { stdDeviation: 0 } });
+        gsap.set(el, { opacity: 0, xPercent: 0 });
       }
     });
     prevActiveRef.current = active;
@@ -251,40 +227,6 @@ export function Scene2Problema({ sceneRef }) {
 
   return (
     <section className="scene scene--2" ref={sceneRef}>
-      {/* Un <filter> por slide (nunca uno compartido): cada uno anima su
-          propio scale/stdDeviation de forma independiente durante su
-          propia transición, y dos slides pueden estar disolviéndose a la
-          vez (saliente + entrante) con progresos distintos. Oculto vía
-          width/height:0, nunca display:none — Safari no resuelve
-          referencias filter:url(#...) a defs dentro de un SVG con
-          display:none. */}
-      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
-        <defs>
-          {SLIDES.map((slide, i) => (
-            <filter
-              key={slide.image}
-              id={`scene2-dissolve-${i}`}
-              x="-15%"
-              y="-15%"
-              width="130%"
-              height="130%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed={i + 1} result="noise" />
-              <feDisplacementMap
-                ref={setDisplacementRef(i)}
-                in="SourceGraphic"
-                in2="noise"
-                scale="0"
-                xChannelSelector="R"
-                yChannelSelector="G"
-                result="displaced"
-              />
-              <feGaussianBlur ref={setBlurRef(i)} in="displaced" stdDeviation="0" />
-            </filter>
-          ))}
-        </defs>
-      </svg>
       <div
         className="scene2__image-wrap"
         onPointerDown={onImagePointerDown}
@@ -293,9 +235,14 @@ export function Scene2Problema({ sceneRef }) {
         onPointerCancel={onImagePointerCancel}
       >
         {SLIDES.map((slide, i) => (
-          <div key={slide.image} className="scene2__image-filter" ref={setWrapperRef(i)}>
-            <img ref={setImageRef(i)} className="scene2__image" src={slide.image} alt={slide.alt} draggable={false} />
-          </div>
+          <img
+            key={slide.image}
+            ref={setImageRef(i)}
+            className="scene2__image"
+            src={slide.image}
+            alt={slide.alt}
+            draggable={false}
+          />
         ))}
       </div>
       <p className="scene2__message" ref={textRef}>
