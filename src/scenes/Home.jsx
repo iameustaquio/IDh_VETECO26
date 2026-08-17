@@ -12,22 +12,26 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Lag (en segundos) del scrub de las transiciones entre escenas — un
 // scrub:true clásico ata el tween al scroll bruto 1:1; este valor deja
-// que el tween persiga esa posición con una inercia propia notable,
-// más "worldscroll" fluido y menos "regla milimetrada". Subido tras
-// feedback del cliente ("no me gusta nada cómo queda, necesito más
-// animación y fluidez") — 0.45 no se notaba lo suficiente.
-const SCRUB_LAG = 0.7;
+// que el tween persiga esa posición con una inercia propia notable, más
+// fluido y menos "regla milimetrada". Bajado de 0.7 a 0.5 al pasar del
+// wipe cinematográfico al "zoom-through" (elegido por el cliente entre
+// las opciones presentadas): un empuje de cámara pide una respuesta algo
+// más inmediata que el asentamiento lento que pedía el filo diagonal.
+const SCRUB_LAG = 0.5;
 
 // HOME — cinco escenas encadenadas por scroll vertical 100% manual
 // (documento maestro, sección 24; documento 03, storyboard completo).
 //
 // Arquitectura de scroll "worldscroll": cada escena se fija en pantalla
 // (pin) durante su propio tramo de scroll; la siguiente escena, que sigue
-// en flujo normal justo debajo, se desliza hacia arriba y la cubre en vez
-// de sustituirla con un corte duro. Mientras la cubre, la escena saliente
-// se aleja levemente en profundidad (escala, blur, inclinación) — el
-// mismo lenguaje de "profundidad sin abusar" que ya usa cada escena por
-// separado, aplicado ahora a la transición entre ellas.
+// en flujo normal justo debajo, cruza sobre ella en vez de sustituirla
+// con un corte duro. Transición "zoom-through" (madewithgsap.com /
+// ciaoenergy.com, elegida por el cliente frente a un wipe con filo
+// diagonal y a un revelado fragmentado): sin ningún corte geométrico, la
+// escena saliente escala hacia arriba y se desvanece — como si la cámara
+// la atravesara — mientras la entrante emerge desde un zoom centrado,
+// ambas cruzando en opacidad. Nunca se tocan x/y/rotateX: un empuje de
+// cámara es axial, no un deslizamiento ni una inclinación de tarjeta.
 //
 // El pin y la transformación de salida viven en DOS elementos distintos
 // (shell exterior vs. escena interior): GSAP pinea con position:fixed +
@@ -74,7 +78,6 @@ export function Home() {
 
       shells.forEach((shellRef, i) => {
         const shellEl = shellRef.current;
-        const sceneEl = scenes[i].current;
         const isLast = i === shells.length - 1;
         gsap.set(shellEl, { zIndex: i + 1 });
 
@@ -108,115 +111,111 @@ export function Home() {
         // es quien lo inserta), así que solo aquí setPointerEvents ya
         // puede encontrarlo y sincronizarlo desde el primer render.
         setPointerEvents(shellEl, i === 0 ? "auto" : "none");
-
-        // La meseta de nitidez ("solo se lee bien parado en el punto
-        // exacto", feedback del cliente) no se consigue retrasando el blur
-        // por su cuenta: mientras el shell está fijado, el siguiente sigue
-        // en flujo normal y empieza a asomar por abajo desde el primer
-        // píxel de scroll (pinSpacing:false). Si el blur se retrasa pero
-        // el asomo no, se ven un instante dos escenas nítidas a la vez.
-        // La meseta real viene del <div className="scene-gap"> del JSX:
-        // un hueco muerto en el flujo que retrasa CUÁNDO empieza a asomar
-        // la siguiente escena. Este tween, en cambio, vuelve a ir en
-        // sincronía total con ese asomo (start:"top bottom", igual que
-        // antes) — por construcción, cubre justo el tramo en el que la
-        // siguiente escena entra en cuadro, sea cual sea el largo del hueco.
-        gsap.fromTo(
-          sceneEl,
-          { scale: 1, x: 0, y: 0, rotateX: 0, filter: "blur(0px) brightness(1)" },
-          {
-            scale: 0.72,
-            x: -50,
-            y: -110,
-            rotateX: -18,
-            filter: "blur(11px) brightness(0.58)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: shells[i + 1].current,
-              start: "top bottom",
-              end: "top top",
-              // scrub con lag (en vez de scrub:true = 1:1 con el scroll
-              // bruto) para que el tween persiga la posición con una
-              // pizca de inercia propia — la diferencia entre una
-              // transición que "sigue al dedo" y una que se siente
-              // fluida. Mismo valor en los dos tweens de abajo para que
-              // blur, filo y asentamiento de la entrante avancen
-              // siempre a la par (ver nota de la meseta más arriba).
-              scrub: SCRUB_LAG,
-            },
-          },
-        );
-
-        // La escena entrante no solo queda al descubierto por el filo:
-        // también se asienta en su sitio (escala levemente hacia 1 e
-        // inclinación hacia 0), la misma "profundidad sin abusar" que ya
-        // se aplica a la saliente — así ninguna de las dos escenas se
-        // siente estática durante la transición. Va en la escena interior
-        // de shells[i+1], nunca en su shell (que solo recibe el pin y el
-        // clip-path), por la misma razón de siempre.
-        gsap.fromTo(
-          scenes[i + 1].current,
-          { scale: 1.1, rotateX: 7 },
-          {
-            scale: 1,
-            rotateX: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: shells[i + 1].current,
-              start: "top bottom",
-              end: "top top",
-              scrub: SCRUB_LAG,
-            },
-          },
-        );
-
-        // Corte diagonal en el borde de entrada de la siguiente escena —
-        // en vez de un simple borde horizontal recto (que se sentía como
-        // una tarjeta desvaneciéndose), la escena entrante se revela con
-        // un filo inclinado tipo "cuchilla", el lenguaje visual típico de
-        // un wipe worldscroll. Va en el SHELL (no en la escena interior:
-        // ese elemento ya lleva el tween de escala/blur de arriba —
-        // mezclar transform y clip-path en el mismo elemento no genera el
-        // conflicto de dos pines, pero mantenerlos separados evita
-        // cualquier sorpresa) y comparte el mismo disparador que el
-        // resto, así que el filo y el blur avanzan exactamente a la par.
-        gsap.fromTo(
-          shells[i + 1].current,
-          { clipPath: "polygon(0% 24%, 100% 0%, 100% 100%, 0% 100%)" },
-          {
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: shells[i + 1].current,
-              start: "top bottom",
-              end: "top top",
-              scrub: SCRUB_LAG,
-            },
-          },
-        );
-
-        // Brillo diagonal que recorre el filo mientras se destapa la
-        // escena entrante — sin él, el wipe es solo un corte geométrico;
-        // con él, se lee como una superficie que "coge la luz" al
-        // revelarse, mucho más animado. Vive en la variable CSS
-        // --sheen-x que consume el ::after de .scene-shell (Home.css):
-        // así se anima sin añadir ningún nodo ni ref nuevos, y el propio
-        // clip-path del shell ya lo recorta a la zona revelada.
-        gsap.fromTo(
-          shells[i + 1].current,
-          { "--sheen-x": "-130%" },
-          {
-            "--sheen-x": "130%",
-            ease: "none",
-            scrollTrigger: {
-              trigger: shells[i + 1].current,
-              start: "top bottom",
-              end: "top top",
-              scrub: SCRUB_LAG,
-            },
-          },
-        );
       });
+
+      // --- Zoom-through: la cámara "atraviesa" cada escena en vez de que
+      // un filo la tape --- la saliente escala hacia arriba y se
+      // desvanece/desenfoca, la entrante emerge desde un zoom centrado y
+      // llega a foco, ambas cruzando en opacidad. Nunca tocan x/y/rotateX:
+      // un empuje de cámara es axial, no un deslizamiento ni una
+      // inclinación de tarjeta.
+      //
+      // Las escenas 2, 3 y 4 tienen DOS fases (entran, luego salen) y
+      // viven en UNA sola timeline con UN solo ScrollTrigger (trigger +
+      // endTrigger), nunca en dos ScrollTriggers independientes: cada
+      // ScrollTrigger, fuera de su propio rango, satura de forma aislada
+      // al extremo más cercano (0 o 1) en cuanto se crea — con dos
+      // triggers independientes sobre el mismo elemento, ambos saturan
+      // "a la vez" nada más crearse (scrollY=0 está antes de los dos
+      // rangos) y el que se crea después pisa al primero: la escena
+      // aparecía ya asentada (opacity:1) antes incluso de haber entrado,
+      // y al llegar realmente a su propio rango de entrada se veía un
+      // salto/parpadeo en vez de un fundido gradual. Combinar ambas fases
+      // en una timeline con un único progreso 0–1 (vía endTrigger) elimina
+      // la ambigüedad: "antes del principio" y "después del final" quedan
+      // definidos una sola vez, nunca dos veces en conflicto.
+      const ENTER_UNITS = 100; // 100dvh — la propia escena (su shell)
+      const GAP_UNITS = 45; // 45dvh — el .scene-gap antes de la siguiente
+      const EXIT_UNITS = 100; // 100dvh — la siguiente escena (su shell)
+      const MID_TOTAL = ENTER_UNITS + GAP_UNITS + EXIT_UNITS;
+
+      // Escena 1: nunca es "entrante" de nadie (es la primera) — solo
+      // sale, empujada por la llegada de la escena 2.
+      gsap.fromTo(
+        scenes[0].current,
+        { scale: 1, opacity: 1, filter: "blur(0px)" },
+        {
+          scale: 1.18,
+          opacity: 0,
+          filter: "blur(6px)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: shells[1].current,
+            start: "top bottom",
+            end: "top top",
+            // scrub con lag (en vez de scrub:true = 1:1 con el scroll
+            // bruto) para que el tween persiga la posición con una pizca
+            // de inercia propia — la diferencia entre una transición que
+            // "sigue al dedo" y una que se siente fluida. Mismo valor en
+            // el resto de tweens de este bloque para que todas crucen
+            // siempre exactamente a la par.
+            scrub: SCRUB_LAG,
+          },
+        },
+      );
+
+      // Escenas 2, 3 y 4: entrada + salida en una sola timeline.
+      for (let k = 1; k <= 3; k++) {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: shells[k].current,
+            start: "top bottom",
+            endTrigger: shells[k + 1].current,
+            end: "top top",
+            scrub: SCRUB_LAG,
+          },
+        });
+        tl.fromTo(
+          scenes[k].current,
+          { scale: 0.88, opacity: 0, filter: "blur(8px)" },
+          { scale: 1, opacity: 1, filter: "blur(0px)", ease: "none", duration: ENTER_UNITS / MID_TOTAL },
+          0,
+        );
+        // fromTo explícito, no .to(): un .to() sin "from" captura su punto
+        // de partida del valor ACTUAL del elemento en el momento en que se
+        // construye la timeline (aquí, justo después del fromTo de arriba,
+        // que ya dejó opacity en 0) — no del valor que tendrá cuando el
+        // playhead realmente llegue a este tramo tras la entrada+meseta.
+        // Con ese "from" mal capturado (0 en vez de 1), opacity no tenía
+        // nada que interpolar y se quedaba plana en 0 durante toda la
+        // salida, mientras solo escala seguía moviéndose. Fijar el "from"
+        // explícitamente (igual al "to" del tween de entrada) lo evita.
+        tl.fromTo(
+          scenes[k].current,
+          { scale: 1, opacity: 1, filter: "blur(0px)" },
+          { scale: 1.18, opacity: 0, filter: "blur(6px)", ease: "none", duration: EXIT_UNITS / MID_TOTAL },
+          (ENTER_UNITS + GAP_UNITS) / MID_TOTAL,
+        );
+      }
+
+      // Escena 5: nunca es "saliente" de nadie (es la última) — solo
+      // entra, empujada por la llegada de su propio shell.
+      gsap.fromTo(
+        scenes[4].current,
+        { scale: 0.88, opacity: 0, filter: "blur(8px)" },
+        {
+          scale: 1,
+          opacity: 1,
+          filter: "blur(0px)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: shells[4].current,
+            start: "top bottom",
+            end: "top top",
+            scrub: SCRUB_LAG,
+          },
+        },
+      );
 
       // Nota: se probó un snap global a los límites de cada escena (progreso
       // en incrementos de 1/4), pero en esta arquitectura de pines
