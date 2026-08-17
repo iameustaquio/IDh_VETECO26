@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Scene1Umbral } from "./Scene1Umbral.jsx";
 import { Scene2Problema } from "./Scene2Problema.jsx";
+import { Marquee } from "./Marquee.jsx";
 import { Scene3Ingenieria } from "./Scene3Ingenieria.jsx";
 import { Scene4Escala } from "./Scene4Escala.jsx";
 import { Scene5Cierre } from "./Scene5Cierre.jsx";
@@ -52,6 +53,7 @@ export function Home() {
   const shell3Ref = useRef(null);
   const shell4Ref = useRef(null);
   const shell5Ref = useRef(null);
+  const marqueeRef = useRef(null);
 
   useLayoutEffect(() => {
     const scenes = [scene1Ref, scene2Ref, scene3Ref, scene4Ref, scene5Ref];
@@ -135,9 +137,8 @@ export function Home() {
       // la ambigüedad: "antes del principio" y "después del final" quedan
       // definidos una sola vez, nunca dos veces en conflicto.
       const ENTER_UNITS = 100; // 100dvh — la propia escena (su shell)
-      const GAP_UNITS = 45; // 45dvh — el .scene-gap antes de la siguiente
+      const DEFAULT_GAP_UNITS = 45; // 45dvh — el .scene-gap antes de la siguiente
       const EXIT_UNITS = 100; // 100dvh — la siguiente escena (su shell)
-      const MID_TOTAL = ENTER_UNITS + GAP_UNITS + EXIT_UNITS;
 
       // Escena 1: nunca es "entrante" de nadie (es la primera) — solo
       // sale, empujada por la llegada de la escena 2.
@@ -164,13 +165,25 @@ export function Home() {
         },
       );
 
-      // Escenas 2, 3 y 4: entrada + salida en una sola timeline.
-      for (let k = 1; k <= 3; k++) {
+      // Escenas 2, 3 y 4: entrada + salida en una sola timeline. La
+      // escena 2 es un caso especial: el marquee (sin pin) vive entre su
+      // hueco y la escena 3, así que su salida va ligada a la llegada del
+      // marquee, no a la de la escena 3 — y su "meseta" debe cubrir
+      // hueco + marquee + hueco (100dvh + 45+45), no un único hueco de
+      // 45dvh como el resto de escenas intermedias.
+      const MID_TRANSITIONS = [
+        { sceneIndex: 1, endTrigger: marqueeRef.current, gapUnits: 45 + 100 + 45 },
+        { sceneIndex: 2, endTrigger: shells[3].current, gapUnits: DEFAULT_GAP_UNITS },
+        { sceneIndex: 3, endTrigger: shells[4].current, gapUnits: DEFAULT_GAP_UNITS },
+      ];
+
+      MID_TRANSITIONS.forEach(({ sceneIndex: k, endTrigger, gapUnits }) => {
+        const total = ENTER_UNITS + gapUnits + EXIT_UNITS;
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: shells[k].current,
             start: "top bottom",
-            endTrigger: shells[k + 1].current,
+            endTrigger,
             end: "top top",
             scrub: SCRUB_LAG,
           },
@@ -178,7 +191,7 @@ export function Home() {
         tl.fromTo(
           scenes[k].current,
           { scale: 0.88, opacity: 0, filter: "blur(8px)" },
-          { scale: 1, opacity: 1, filter: "blur(0px)", ease: "none", duration: ENTER_UNITS / MID_TOTAL },
+          { scale: 1, opacity: 1, filter: "blur(0px)", ease: "none", duration: ENTER_UNITS / total },
           0,
         );
         // fromTo explícito, no .to(): un .to() sin "from" captura su punto
@@ -193,10 +206,10 @@ export function Home() {
         tl.fromTo(
           scenes[k].current,
           { scale: 1, opacity: 1, filter: "blur(0px)" },
-          { scale: 1.18, opacity: 0, filter: "blur(6px)", ease: "none", duration: EXIT_UNITS / MID_TOTAL },
-          (ENTER_UNITS + GAP_UNITS) / MID_TOTAL,
+          { scale: 1.18, opacity: 0, filter: "blur(6px)", ease: "none", duration: EXIT_UNITS / total },
+          (ENTER_UNITS + gapUnits) / total,
         );
-      }
+      });
 
       // Escena 5: nunca es "saliente" de nadie (es la última) — solo
       // entra, empujada por la llegada de su propio shell.
@@ -238,6 +251,8 @@ export function Home() {
       <div className="scene-shell" ref={shell2Ref}>
         <Scene2Problema sceneRef={scene2Ref} />
       </div>
+      <div className="scene-gap" aria-hidden="true" />
+      <Marquee sectionRef={marqueeRef} />
       <div className="scene-gap" aria-hidden="true" />
       <div className="scene-shell" ref={shell3Ref}>
         <Scene3Ingenieria sceneRef={scene3Ref} />
