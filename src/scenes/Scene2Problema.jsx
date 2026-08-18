@@ -27,6 +27,7 @@ export function Scene2Problema({ sceneRef }) {
   const { t } = useLanguage();
   const [active, setActive] = useState(0);
   const imageRefs = useRef([]);
+  const imageWrapRef = useRef(null);
   const textRef = useRef(null);
   const prevActiveRef = useRef(0);
   const directionRef = useRef(1);
@@ -166,6 +167,27 @@ export function Scene2Problema({ sceneRef }) {
         },
       );
 
+      // Barrido de aluminio cepillado sobre el velo oscuro: una banda de
+      // brillo diagonal que recorre el velo a medida que se hace scroll
+      // (nunca en bucle automático — feedback del cliente) para que las
+      // superficies oscuras dejen de leerse como un color plano. Mismo
+      // trigger/rango que el parallax de arriba para que ambos avancen
+      // exactamente al mismo ritmo del scroll de la escena.
+      gsap.fromTo(
+        imageWrapRef.current,
+        { "--sheen": "-25%" },
+        {
+          "--sheen": "125%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: sceneRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        },
+      );
+
       gsap.fromTo(
         textRef.current,
         { opacity: 0, y: 12 },
@@ -229,6 +251,7 @@ export function Scene2Problema({ sceneRef }) {
     <section className="scene scene--2" ref={sceneRef}>
       <div
         className="scene2__image-wrap"
+        ref={imageWrapRef}
         onPointerDown={onImagePointerDown}
         onPointerMove={onImagePointerMove}
         onPointerUp={onImagePointerUp}

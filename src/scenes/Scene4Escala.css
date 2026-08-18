@@ -16,6 +16,14 @@
   text-align: center;
 }
 
+/* tabular-nums: sin esto, al contar 1→17 la palabra cambia de ancho justo
+   al cruzar de una cifra a dos (1-9 frente a 10-17) y el resto de la
+   frase da un pequeño salto lateral en cada actualización. */
+.scene4__count {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-brand-orange);
+}
+
 .scene4__subtitle {
   font-family: var(--font-ui);
   font-size: var(--fs-body);

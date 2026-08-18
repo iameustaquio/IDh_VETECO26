@@ -14,6 +14,9 @@
      deslizar entre imágenes. */
   touch-action: pan-y;
   cursor: grab;
+  /* Valor de partida por si el JS aún no ha corrido: el degradado de abajo
+     necesita un porcentaje válido, no una custom property sin resolver. */
+  --sheen: -25%;
 }
 
 .scene2__image-wrap:active {
@@ -24,12 +27,23 @@
    puntos dependían solo de text-shadow para leerse sobre la foto de turno,
    suficiente en fotos oscuras pero no en las claras (cielo, nieve, salón
    iluminado) — un degradado constante garantiza contraste pase lo que pase
-   detrás, sin tener que calibrar sombra por foto. */
+   detrás, sin tener que calibrar sombra por foto.
+   Encima de ese velo, una segunda capa: una banda diagonal de brillo que
+   se desplaza con --sheen (animada por scroll desde Scene2Problema.jsx)
+   — el tipo de reflejo que capta una superficie de aluminio cepillado al
+   moverse, para que el velo oscuro deje de leerse como un color plano. */
 .scene2__image-wrap::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.32) 24%, rgba(0, 0, 0, 0) 48%);
+  background:
+    linear-gradient(
+      115deg,
+      transparent calc(var(--sheen) - 16%),
+      rgba(255, 255, 255, 0.12) var(--sheen),
+      transparent calc(var(--sheen) + 16%)
+    ),
+    linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.32) 24%, rgba(0, 0, 0, 0) 48%);
   pointer-events: none;
 }
 

@@ -84,7 +84,9 @@
       ]
     },
     "scene4": {
-      "title": "Presença ativa em 17 países.",
+      "titlePrefix": "Presença ativa em ",
+      "titleCount": 17,
+      "titleSuffix": " países.",
       "subtitle": "Cinco mercados em destaque, dos 17 países onde a IDh trabalha lado a lado com o cliente.",
       "markets": ["Espanha", "Portugal", "México", "Estados Unidos", "Médio Oriente"],
       "marketDetails": [

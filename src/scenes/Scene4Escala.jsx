@@ -1313,6 +1313,7 @@ export function Scene4Escala({ sceneRef }) {
   const flightPathRef = useRef(null);
   const flightTween = useRef(null);
   const idleTween = useRef(null);
+  const countRef = useRef(null);
   const dragState = useRef({ dragging: false, startX: 0, startTranslate: 0, moved: 0 });
 
   const worldPx = () => (mapRef.current?.getBoundingClientRect().width ?? 0) / 2;
@@ -1349,6 +1350,33 @@ export function Scene4Escala({ sceneRef }) {
           },
         },
       );
+
+      // La cifra del titular cuenta de 1 a 17 al mismo ritmo exacto con el
+      // que aparece el globo (mismo trigger/rango que el fromTo de arriba,
+      // nunca uno propio) para que ambos se lean como una sola entrada, no
+      // como dos animaciones casualmente parecidas. GSAP no puede tuitear
+      // directamente el texto de un nodo — se anima un objeto plano y el
+      // propio dígito se escribe a mano en cada frame vía onUpdate.
+      const counter = { value: 1 };
+      gsap.fromTo(
+        counter,
+        { value: 1 },
+        {
+          value: t.home.scene4.titleCount,
+          ease: "none",
+          snap: { value: 1 },
+          onUpdate: () => {
+            if (countRef.current) countRef.current.textContent = Math.round(counter.value);
+          },
+          scrollTrigger: {
+            trigger: sceneRef.current,
+            start: "top 70%",
+            end: "top 30%",
+            scrub: true,
+          },
+        },
+      );
+
       startIdleSpin();
     }, sceneRef);
 
@@ -1440,7 +1468,13 @@ export function Scene4Escala({ sceneRef }) {
 
   return (
     <section className="scene scene--4" ref={sceneRef}>
-      <h2 className="scene4__title">{t.home.scene4.title}</h2>
+      <h2 className="scene4__title">
+        {t.home.scene4.titlePrefix}
+        <span className="scene4__count" ref={countRef}>
+          1
+        </span>
+        {t.home.scene4.titleSuffix}
+      </h2>
       <p className="scene4__subtitle">{t.home.scene4.subtitle}</p>
       <div className="scene4__stage" ref={stageRef}>
         <div
