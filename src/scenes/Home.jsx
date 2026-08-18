@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Scene1Umbral } from "./Scene1Umbral.jsx";
@@ -52,10 +53,16 @@ export function Home() {
   const shell3Ref = useRef(null);
   const shell4Ref = useRef(null);
   const shell5Ref = useRef(null);
+  const progress1Ref = useRef(null);
+  const progress2Ref = useRef(null);
+  const progress3Ref = useRef(null);
+  const progress4Ref = useRef(null);
+  const progress5Ref = useRef(null);
 
   useLayoutEffect(() => {
     const scenes = [scene1Ref, scene2Ref, scene3Ref, scene4Ref, scene5Ref];
     const shells = [shell1Ref, shell2Ref, shell3Ref, shell4Ref, shell5Ref];
+    const progressTicks = [progress1Ref, progress2Ref, progress3Ref, progress4Ref, progress5Ref];
 
     const ctx = gsap.context(() => {
       // GSAP envuelve cada shell fijado en su propio <div class="pin-spacer">
@@ -74,6 +81,18 @@ export function Home() {
         gsap.set(el, { pointerEvents: value });
         const parent = el?.parentElement;
         if (parent?.classList.contains("pin-spacer")) gsap.set(parent, { pointerEvents: value });
+      };
+
+      // Indicador de progreso: un raíl fijo con un tick por escena, ajeno
+      // al pin de cada shell (vive fuera de #smooth-content vía portal —
+      // ver el JSX más abajo) para no heredar el transform con el que
+      // ScrollSmoother simula el scroll. Reutiliza el mismo onToggle que ya
+      // dispara pointer-events por shell en vez de crear ScrollTriggers
+      // propios: es la misma frontera de "qué escena manda ahora mismo".
+      const setActiveTick = (idx) => {
+        progressTicks.forEach((ref, ti) => {
+          ref.current?.classList.toggle("is-active", ti === idx);
+        });
       };
 
       shells.forEach((shellRef, i) => {
@@ -103,6 +122,7 @@ export function Home() {
           onToggle: (self) => {
             setPointerEvents(shellEl, self.isActive ? "auto" : "none");
             setPointerEvents(shells[i + 1].current, self.isActive ? "none" : "auto");
+            setActiveTick(self.isActive ? i : i + 1);
           },
         });
 
@@ -112,6 +132,8 @@ export function Home() {
         // puede encontrarlo y sincronizarlo desde el primer render.
         setPointerEvents(shellEl, i === 0 ? "auto" : "none");
       });
+
+      setActiveTick(0);
 
       // --- Zoom-through: la cámara "atraviesa" cada escena en vez de que
       // un filo la tape --- la saliente escala hacia arriba y se
@@ -250,6 +272,23 @@ export function Home() {
       <div className="scene-shell" ref={shell5Ref}>
         <Scene5Cierre sceneRef={scene5Ref} />
       </div>
+      {/* Portal a document.body: ScrollSmoother mueve #smooth-content (nuestro
+          ancestro) con su propio transform para simular el scroll, y un
+          transform en un ancestro convierte a cualquier position:fixed
+          descendiente en fixed-respecto-a-ESE-ancestro, no a la ventana —
+          el raíl se desplazaría con el resto del contenido en vez de quedar
+          fijo en pantalla. Renderlo fuera del árbol de #smooth-content evita
+          el problema sin tocar la configuración de ScrollSmoother. */}
+      {createPortal(
+        <div className="scene-progress" aria-hidden="true">
+          <span className="scene-progress__tick" ref={progress1Ref} />
+          <span className="scene-progress__tick" ref={progress2Ref} />
+          <span className="scene-progress__tick" ref={progress3Ref} />
+          <span className="scene-progress__tick" ref={progress4Ref} />
+          <span className="scene-progress__tick" ref={progress5Ref} />
+        </div>,
+        document.body,
+      )}
     </div>
   );
 }

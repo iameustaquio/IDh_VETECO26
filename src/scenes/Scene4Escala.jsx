@@ -1283,6 +1283,25 @@ const CONTINENT_POINTS = CONTINENT_GEO_POINTS.map((pts) =>
 
 const CONTINENT_PATHS = CONTINENT_POINTS.map(polylinePath);
 
+// España y Portugal quedan a ~16px de centro a centro a esta escala —
+// menos que la suma de sus dos radios (icono de sede + punto) — así que en
+// reposo, antes de tocar ninguno, se leían casi como un único marcador.
+// Este empujón se aplica sobre el punto YA proyectado (world units, no
+// grados) y solo a estos dos: nunca toca MARKET_GEO, que sigue
+// representando la posición real de cada mercado para cualquier otro uso.
+// Se usa también como origen/destino de la ruta de vuelo (drawFlightTo)
+// para que la línea siga naciendo exactamente del icono visible.
+const MARKET_SCREEN_NUDGE = [
+  { dx: 5, dy: -6 }, // España
+  { dx: -9, dy: 7 }, // Portugal
+];
+
+const MARKET_WORLD = MARKET_GEO.map((geo, i) => {
+  const { x, y } = geoToWorld(geo);
+  const nudge = MARKET_SCREEN_NUDGE[i];
+  return nudge ? { x: x + nudge.dx, y: y + nudge.dy } : { x, y };
+});
+
 const DRAG_CLICK_THRESHOLD = 6;
 
 export function Scene4Escala({ sceneRef }) {
@@ -1382,8 +1401,8 @@ export function Scene4Escala({ sceneRef }) {
     const path = flightPathRef.current;
     if (!path || i === 0) return;
 
-    const origin = geoToWorld(MARKET_GEO[0]);
-    const dest = geoToWorld(MARKET_GEO[i]);
+    const origin = MARKET_WORLD[0];
+    const dest = MARKET_WORLD[i];
     const end = { x: dest.x + copy * WORLD_W, y: dest.y };
     // España también vive en dos copias del mapa (mismo truco de scroll
     // infinito) — se elige la copia de España más cercana a la copia del
@@ -1452,8 +1471,7 @@ export function Scene4Escala({ sceneRef }) {
             >
               <path className="scene4__flight-path" ref={flightPathRef} d="" />
             </svg>
-            {MARKET_GEO.map((geo, i) => {
-              const { x, y } = geoToWorld(geo);
+            {MARKET_WORLD.map(({ x, y }, i) => {
               const top = `${(y / WORLD_H) * 100}%`;
               const isHome = i === 0;
               return [0, 1].map((copy) => {

@@ -20,6 +20,19 @@
   cursor: grabbing;
 }
 
+/* Velo fijo (no ligado al scroll ni a la foto activa): el mensaje y los
+   puntos dependían solo de text-shadow para leerse sobre la foto de turno,
+   suficiente en fotos oscuras pero no en las claras (cielo, nieve, salón
+   iluminado) — un degradado constante garantiza contraste pase lo que pase
+   detrás, sin tener que calibrar sombra por foto. */
+.scene2__image-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.32) 24%, rgba(0, 0, 0, 0) 48%);
+  pointer-events: none;
+}
+
 .scene2__image {
   position: absolute;
   inset: 0;

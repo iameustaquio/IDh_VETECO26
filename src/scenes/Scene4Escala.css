@@ -115,11 +115,13 @@
   opacity: 0;
 }
 
-/* padding mínimo a propósito: España y Portugal quedan a ~16px de
-   centro a centro a esta escala, así que una zona de clic generosa haría
-   que sus áreas se solaparan y un clic destinado a uno active el otro.
-   El nombre vive fuera del flujo (position:absolute) para que reservar
-   su espacio no infle la caja de clic del botón en vertical. */
+/* padding mínimo a propósito: España y Portugal, los dos mercados más
+   próximos entre sí, siguen a poca distancia incluso tras el empujón
+   visual de MARKET_SCREEN_NUDGE (Scene4Escala.jsx) — una zona de clic
+   generosa haría que sus áreas se solaparan y un clic destinado a uno
+   active el otro. El nombre vive fuera del flujo (position:absolute)
+   para que reservar su espacio no infle la caja de clic del botón en
+   vertical. */
 .scene4__marker {
   position: absolute;
   display: flex;

@@ -32,3 +32,58 @@
   transform-origin: center top;
   will-change: transform, filter;
 }
+
+/* Raíl de progreso: cápsula translúcida propia en vez de un color fijo
+   porque las escenas alternan fondo claro (1, 3, 4, 5) y oscuro (2) — un
+   único color de tick no leería bien en ambos. El fondo de la cápsula
+   sí funciona en los dos casos: un gris suave se ve como sombra sobre
+   blanco/mist y como resalte sobre el tinta de la escena 2.
+   Oculto por debajo de 768px: el dispositivo real de la demo es una
+   pantalla táctil de stand (grande, apaisada) — no un móvil — y a ese
+   ancho el titular de la escena 1 y el de la escena 4, ambos centrados a
+   pantalla completa, no dejan ninguna esquina libre donde encajar una
+   cápsula fija sin cruzarse con el texto en algún punto del recorrido. */
+.scene-progress {
+  display: none;
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 20;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 6px;
+  border-radius: 999px;
+  background: rgba(128, 128, 122, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .scene-progress {
+    display: flex;
+  }
+}
+
+.scene-progress__tick {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(128, 128, 122, 0.55);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    height var(--duration-base) var(--ease-out);
+}
+
+.scene-progress__tick.is-active {
+  height: 20px;
+  border-radius: 3px;
+  background: var(--color-brand-orange);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-progress__tick {
+    transition: none;
+  }
+}
