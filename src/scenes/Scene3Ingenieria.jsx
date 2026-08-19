@@ -7,6 +7,7 @@ import cr601Image from "../assets/soluciones/manillas/cr601.png";
 import cr606Image from "../assets/soluciones/manillas/cr606.png";
 import cr603dImage from "../assets/soluciones/manillas/cr603d.png";
 import jm6Image from "../assets/soluciones/manillas/jm6.png";
+import { Cr603Exploded } from "../components/Cr603Exploded.jsx";
 import { useLanguage } from "../hooks/useLanguage.js";
 import "./Scene3Ingenieria.css";
 
@@ -66,18 +67,27 @@ const PRODUCTS = [
 
 const DRAG_CLICK_THRESHOLD = 6;
 
+// El despiece de la escena (Cr603Exploded) es de la CR603 — así que el
+// carrusel entra ya centrado en ella, no en el primer producto de la
+// lista: el montaje termina exactamente en la foto a la que da paso, sin
+// un salto de producto justo al entregar el testigo.
+const CR603_INDEX = PRODUCTS.findIndex((p) => p.image === cr603Image);
+
 export function Scene3Ingenieria({ sceneRef }) {
   const { t } = useLanguage();
-  const [activeProduct, setActiveProduct] = useState(0);
+  const [activeProduct, setActiveProduct] = useState(CR603_INDEX);
   const [activeCallout, setActiveCallout] = useState(null);
   const calloutRefs = useRef([]);
   const slideRefs = useRef([]);
   const carouselRef = useRef(null);
   const cardRef = useRef(null);
+  const explodedRef = useRef(null);
+  const explodedPieceRefs = useRef([]);
+  const carouselWrapRef = useRef(null);
   const orbitTween = useRef(null);
   const posTween = useRef(null);
-  const posRef = useRef(0);
-  const targetRef = useRef(0);
+  const posRef = useRef(CR603_INDEX);
+  const targetRef = useRef(CR603_INDEX);
   const spacingRef = useRef(300);
   const dragState = useRef({ dragging: false, startX: 0, startPos: 0, moved: 0 });
   calloutRefs.current = [];
@@ -137,20 +147,78 @@ export function Scene3Ingenieria({ sceneRef }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Antesala del carrusel (feedback del cliente): antes de mostrar las
+  // cinco manillas, la CR603 se monta pieza a pieza a partir de su
+  // despiece real (plano CATIA CR603-X) — mismo trigger que antes movía
+  // solo los callouts, ahora con tres fases en una sola timeline en vez
+  // de tres ScrollTriggers sueltos: 1) las piezas convergen desde su
+  // posición "explosionada" sobre el mismo eje vertical del plano
+  // (el cuello de la manilla, no el ancho de la hoja del plano — ver
+  // Cr603Exploded), 2) la ilustración se disuelve mientras aparece el
+  // carrusel real ya centrado en la CR603, 3) los callouts se revelan
+  // sobre la foto, igual que antes. Rango ampliado (antes "top 20%") para
+  // dar recorrido de scroll a una secuencia bastante más larga que un
+  // simple fundido de callouts.
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      const pieces = explodedPieceRefs.current;
+      const manilla = pieces[0];
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sceneRef.current,
           start: "top 70%",
-          end: "top 20%",
+          end: "top -40%",
           scrub: true,
         },
       });
+
+      // Orden de montaje real: primero lo que se apoya directamente sobre
+      // la manilla (carcasa + su tornillería), luego hacia fuera (tapa,
+      // alfombrilla, muelle, piñón) y por último el tornillo que cierra
+      // el conjunto — el mismo orden en el que un montador real lo haría,
+      // no el orden en que aparecen los índices del array.
+      const ASSEMBLY_ORDER = [4, 5, 2, 3, 1, 6, 7];
+      const EXPLODE_DY = { 4: -14, 5: -14, 2: -20, 3: -32, 1: -45, 6: -60, 7: -75 };
+
+      gsap.set(manilla, { opacity: 1 });
+      // gsap.set inmediato antes de construir la timeline: un scrub
+      // ScrollTrigger creado con progreso 0 (la escena aún fuera de
+      // pantalla) no pinta su propio estado "from" hasta que el usuario
+      // hace scroll de verdad — sin esto, cada pieza aparecía ya montada
+      // en su sitio desde el primer fotograma, y solo "saltaba" a
+      // explosionada la primera vez que ScrollTrigger recalculaba.
+      ASSEMBLY_ORDER.forEach((idx) => {
+        const el = pieces[idx];
+        if (el) gsap.set(el, { y: EXPLODE_DY[idx], opacity: 0, scale: 0.7 });
+      });
+      ASSEMBLY_ORDER.forEach((idx, i) => {
+        const el = pieces[idx];
+        if (!el) return;
+        tl.fromTo(
+          el,
+          { y: EXPLODE_DY[idx], opacity: 0, scale: 0.7 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
+          i * 0.11,
+        );
+      });
+
+      tl.fromTo(explodedRef.current, { scale: 1 }, { scale: 1.04, duration: 0.14, ease: "power1.out", yoyo: true, repeat: 1 }, "-=0.1");
+
+      tl.to(explodedRef.current, { opacity: 0, duration: 0.5, ease: "power1.inOut" }, "+=0.1");
+      tl.fromTo(
+        carouselWrapRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: "power1.inOut" },
+        "<",
+      );
+
+      gsap.set(calloutRefs.current, { opacity: 0, scale: 0 });
       tl.fromTo(
         calloutRefs.current,
         { opacity: 0, scale: 0 },
         { opacity: 1, scale: 1, stagger: 0.3, ease: "none" },
+        "-=0.1",
       );
     }, sceneRef);
 
@@ -250,42 +318,47 @@ export function Scene3Ingenieria({ sceneRef }) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <button
-          type="button"
-          className="scene3__nav scene3__nav--prev"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => changeProduct(-1)}
-          aria-label="Anterior"
-        >
-          ‹
-        </button>
-        {PRODUCTS.map((p, i) => (
-          <div className="scene3__slide" key={p.image} ref={setSlideRef(i)}>
-            <img className="scene3__image" src={p.image} alt={p.alt} draggable="false" />
-            {i === activeProduct &&
-              p.positions.map((pos, ci) => (
-                <button
-                  key={`${activeProduct}-${ci}`}
-                  type="button"
-                  className={`scene3__callout${activeCallout === ci ? " is-active" : ""}`}
-                  style={pos}
-                  ref={addCalloutRef}
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={() => handleCalloutClick(ci)}
-                  aria-label={callouts[ci]?.title}
-                />
-              ))}
-          </div>
-        ))}
-        <button
-          type="button"
-          className="scene3__nav scene3__nav--next"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => changeProduct(1)}
-          aria-label="Siguiente"
-        >
-          ›
-        </button>
+        <div className="scene3__exploded" ref={explodedRef} aria-hidden="true">
+          <Cr603Exploded className="scene3__exploded-svg" groupRefs={explodedPieceRefs} />
+        </div>
+        <div className="scene3__carousel-content" ref={carouselWrapRef}>
+          <button
+            type="button"
+            className="scene3__nav scene3__nav--prev"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => changeProduct(-1)}
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+          {PRODUCTS.map((p, i) => (
+            <div className="scene3__slide" key={p.image} ref={setSlideRef(i)}>
+              <img className="scene3__image" src={p.image} alt={p.alt} draggable="false" />
+              {i === activeProduct &&
+                p.positions.map((pos, ci) => (
+                  <button
+                    key={`${activeProduct}-${ci}`}
+                    type="button"
+                    className={`scene3__callout${activeCallout === ci ? " is-active" : ""}`}
+                    style={pos}
+                    ref={addCalloutRef}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={() => handleCalloutClick(ci)}
+                    aria-label={callouts[ci]?.title}
+                  />
+                ))}
+            </div>
+          ))}
+          <button
+            type="button"
+            className="scene3__nav scene3__nav--next"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => changeProduct(1)}
+            aria-label="Siguiente"
+          >
+            ›
+          </button>
+        </div>
       </div>
       {active && (
         <div className="scene3__card is-visible" ref={cardRef}>

@@ -32,6 +32,43 @@
   cursor: grabbing;
 }
 
+/* Antesala del carrusel: el despiece de la CR603 ocupa el mismo hueco
+   visual que luego ocupará la manilla activa (mismo ancho/alto que
+   .scene3__slide) para que el relevo entre ilustración y foto no salte de
+   escala. .scene3__carousel-content se queda sin position propio a
+   propósito (position:static, el valor por defecto) — así .scene3__slide
+   y .scene3__nav, ambos position:absolute, siguen resolviendo su
+   contenedor de posicionamiento contra .scene3__carousel de más arriba,
+   no contra este envoltorio nuevo. Un efecto colateral útil: al ser
+   position:absolute, .scene3__exploded ya apila por delante del
+   contenido estático sin necesidad de z-index — la ilustración se
+   disuelve revelando el carrusel debajo, nunca al revés.
+   opacity:0 explícito aquí (no solo en el fromTo de GSAP): el carrusel
+   ocupa el 100% del ancho de la escena, mucho más que la caja centrada
+   del despiece, así que sus manillas vecinas (el efecto "coverflow" ya
+   asoma a los lados por diseño) quedaban visibles desde el primer
+   fotograma, antes de que el scroll llegara a activar el ScrollTrigger
+   — un ScrollTrigger en scrub no fuerza su primer render hasta que
+   avanza de verdad, así que sin este valor por defecto en CSS el "from"
+   de la timeline no llega a pintarse a tiempo. */
+.scene3__carousel-content {
+  opacity: 0;
+}
+
+.scene3__exploded {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.scene3__exploded-svg {
+  width: clamp(140px, 30vw, 220px);
+  height: clamp(280px, 52vh, 460px);
+}
+
 .scene3__slide {
   position: absolute;
   top: 50%;
