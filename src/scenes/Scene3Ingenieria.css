@@ -104,11 +104,21 @@
   font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
-  transition: transform var(--duration-fast) var(--ease-out);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .scene3__nav:hover {
   transform: translateY(-50%) scale(1.1);
+}
+
+/* El botón se "hunde" al tocarlo — misma sombra que se contrae que en
+   Button.css, no solo un scale — para que confirme el toque igual en
+   cualquier control del recorrido, no solo en el CTA. */
+.scene3__nav:active {
+  transform: translateY(-50%) scale(0.92);
+  box-shadow: 0 2px 6px rgba(23, 23, 26, 0.16);
 }
 
 .scene3__nav--prev {
@@ -131,6 +141,12 @@
   cursor: pointer;
   pointer-events: auto;
   transition: transform var(--duration-fast) var(--ease-out);
+}
+
+/* Un marcador no flota como un botón — se toca contra la superficie, así
+   que aquí basta con un hundimiento propio, sin sombra que contraer. */
+.scene3__callout:active {
+  transform: translate(-50%, -50%) scale(0.82);
 }
 
 .scene3__callout::after {
@@ -207,5 +223,10 @@
   font-size: 1.4rem;
   line-height: 1;
   color: var(--color-grey-mid);
+  transition: transform var(--duration-fast) var(--ease-out);
   cursor: pointer;
+}
+
+.scene3__card-close:active {
+  transform: scale(0.85);
 }

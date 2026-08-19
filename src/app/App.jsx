@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Home } from "../scenes/Home.jsx";
 import { MenuPrincipal } from "../sections/MenuPrincipal.jsx";
+import { TouchReticle } from "../components/TouchReticle.jsx";
 import { useStore } from "../state/store.js";
 import "./App.css";
 
@@ -41,10 +42,13 @@ export function App() {
   }, [showingHome]);
 
   return (
-    <div id="smooth-wrapper">
-      <div id="smooth-content" className="app">
-        {showingHome ? <Home /> : <MenuPrincipal />}
+    <>
+      <div id="smooth-wrapper">
+        <div id="smooth-content" className="app">
+          {showingHome ? <Home /> : <MenuPrincipal />}
+        </div>
       </div>
-    </div>
+      <TouchReticle />
+    </>
   );
 }

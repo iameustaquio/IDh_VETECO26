@@ -1447,7 +1447,11 @@ export function Scene4Escala({ sceneRef }) {
     const length = path.getTotalLength();
     const duration = Math.min(1.6, Math.max(0.8, length / 900));
 
-    gsap.set(path, { opacity: 1, strokeDasharray: "9 7", strokeDashoffset: length });
+    // Patrón raya-punto (no un discontinuo uniforme): el mismo convenio
+    // que una línea de centro/trayectoria en un plano técnico — feedback
+    // del cliente, "que se lea como una trayectoria de mecanizado, no
+    // como una línea discontinua cualquiera".
+    gsap.set(path, { opacity: 1, strokeDasharray: "13 5 2 5", strokeDashoffset: length });
 
     flightTween.current = gsap
       .timeline()

@@ -182,6 +182,13 @@
   transform: scale(1.35);
 }
 
+/* Hundimiento al tocar, en el punto (o el icono de sede más abajo), nunca
+   en .scene4__marker: ese translate(-50%,-50%) es el que lo mantiene
+   centrado sobre su coordenada en el mapa — tocarlo aquí lo desplazaría. */
+.scene4__marker:active .scene4__dot {
+  transform: scale(0.85);
+}
+
 /* España es la sede: su marcador es el icono de IDh en vez del punto
    genérico. Se recorta del logo completo (icono + texto) por CSS
    background-position/-size, ya que solo existe el archivo del lockup
@@ -197,6 +204,10 @@
   background-position: -1px -15px;
   box-shadow: 0 0 0 2px var(--color-white), 0 2px 6px rgba(23, 23, 26, 0.25);
   transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.scene4__marker:active .scene4__home-icon {
+  transform: scale(0.9);
 }
 
 .scene4__marker--home.is-active .scene4__home-icon {
@@ -253,4 +264,9 @@
   line-height: 1;
   color: var(--color-grey-mid);
   cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.scene4__card-close:active {
+  transform: scale(0.85);
 }
