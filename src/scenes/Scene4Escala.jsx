@@ -1351,12 +1351,17 @@ export function Scene4Escala({ sceneRef }) {
         },
       );
 
-      // La cifra del titular cuenta de 1 a 17 al mismo ritmo exacto con el
-      // que aparece el globo (mismo trigger/rango que el fromTo de arriba,
-      // nunca uno propio) para que ambos se lean como una sola entrada, no
-      // como dos animaciones casualmente parecidas. GSAP no puede tuitear
-      // directamente el texto de un nodo — se anima un objeto plano y el
-      // propio dígito se escribe a mano en cada frame vía onUpdate.
+      // La cifra del titular cuenta de 1 a 17 — pero NO en el mismo rango
+      // que el globo (feedback del cliente): la escena entera todavía
+      // llega desenfocándose/aclarándose por el cruce de cámara de
+      // Home.jsx durante el "top 70%"–"top 30%" del globo, así que para
+      // cuando el texto se lee nítido el conteo ya había terminado en 17.
+      // El globo (una forma, no texto) tolera bien aparecer aún con algo
+      // de desenfoque residual; la cifra no. Rango propio, más tardío,
+      // para que el conteo ocurra ya con la escena nítida. GSAP no puede
+      // tuitear directamente el texto de un nodo — se anima un objeto
+      // plano y el propio dígito se escribe a mano en cada frame vía
+      // onUpdate.
       const counter = { value: 1 };
       gsap.fromTo(
         counter,
@@ -1370,8 +1375,8 @@ export function Scene4Escala({ sceneRef }) {
           },
           scrollTrigger: {
             trigger: sceneRef.current,
-            start: "top 70%",
-            end: "top 30%",
+            start: "top 40%",
+            end: "top 0%",
             scrub: true,
           },
         },

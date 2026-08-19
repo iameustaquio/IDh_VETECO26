@@ -15,7 +15,16 @@
 // atraviese el brazo en diagonal en vez de asentarse sobre el cuello.
 export function Cr603Exploded({ className, groupRefs }) {
   return (
-    <svg className={className} viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg
+      className={className}
+      viewBox="0 -115 320 535"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* min-y del viewBox en -115 (no en 0): dobla de hueco por encima de
+          las piezas para que puedan "desplegarse" hacia arriba sin salir
+          del recorte del propio <svg> — ninguna coordenada de las piezas
+          de abajo cambia, solo la ventana de recorte se hace más alta. */}
       {/* 1 — Manilla: la pieza dominante, cuello vertical + brazo en
           diagonal. Nunca se mueve — es el ancla contra la que "encajan"
           el resto de piezas al converger. Va primero (debajo del resto en

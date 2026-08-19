@@ -147,18 +147,19 @@ export function Scene3Ingenieria({ sceneRef }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Antesala del carrusel (feedback del cliente): antes de mostrar las
-  // cinco manillas, la CR603 se monta pieza a pieza a partir de su
-  // despiece real (plano CATIA CR603-X) — mismo trigger que antes movía
-  // solo los callouts, ahora con tres fases en una sola timeline en vez
-  // de tres ScrollTriggers sueltos: 1) las piezas convergen desde su
-  // posición "explosionada" sobre el mismo eje vertical del plano
-  // (el cuello de la manilla, no el ancho de la hoja del plano — ver
-  // Cr603Exploded), 2) la ilustración se disuelve mientras aparece el
-  // carrusel real ya centrado en la CR603, 3) los callouts se revelan
-  // sobre la foto, igual que antes. Rango ampliado (antes "top 20%") para
-  // dar recorrido de scroll a una secuencia bastante más larga que un
-  // simple fundido de callouts.
+  // Antesala del carrusel (feedback del cliente, segunda vuelta): la
+  // pieza compactada se despliega en su despiece real al hacer scroll y
+  // vuelve a compactarse antes de disolverse en el carrusel — no una
+  // convergencia desde el arranque (esa primera versión no se leía como
+  // animación en absoluto). Piezas SIEMPRE opacas (nunca fade in/out) y
+  // en pura traslación vertical (sin scale ni rotación): es un despiece
+  // técnico deslizando sobre su propio eje, no un efecto gráfico — así
+  // se ve también en el plano CATIA de origen. Mismo trigger que antes
+  // movía solo los callouts, ahora con cinco fases en una sola timeline:
+  // 1) despliegue (explosión), 2) pausa breve para que se lea el
+  // conjunto, 3) recompactado, 4) pulso de cierre, 5) disolución hacia
+  // el carrusel real (ya centrado en la CR603) + callouts, igual que
+  // antes.
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const pieces = explodedPieceRefs.current;
@@ -168,7 +169,13 @@ export function Scene3Ingenieria({ sceneRef }) {
         scrollTrigger: {
           trigger: sceneRef.current,
           start: "top 70%",
-          end: "top -40%",
+          // Rango generoso a propósito: una timeline en scrub reparte su
+          // duración TOTAL sobre este rango en píxeles pase lo que pase,
+          // así que al pasar de "solo converge" (1 fase) a "despliega,
+          // pausa, recompacta" (3 fases más el cruce final) sin ampliar
+          // el rango, cada fase quedó con MENOS scroll que antes, no más
+          // — el conjunto se leía incluso peor que la primera versión.
+          end: "top -220%",
           scrub: true,
         },
       });
@@ -177,30 +184,40 @@ export function Scene3Ingenieria({ sceneRef }) {
       // la manilla (carcasa + su tornillería), luego hacia fuera (tapa,
       // alfombrilla, muelle, piñón) y por último el tornillo que cierra
       // el conjunto — el mismo orden en el que un montador real lo haría,
-      // no el orden en que aparecen los índices del array.
+      // no el orden en que aparecen los índices del array. El despliegue
+      // usa el orden inverso (desmontar empieza por el tornillo, no por
+      // la carcasa) para que la lectura sea mecánicamente coherente en
+      // los dos sentidos, no solo en el de recompactado.
       const ASSEMBLY_ORDER = [4, 5, 2, 3, 1, 6, 7];
-      const EXPLODE_DY = { 4: -14, 5: -14, 2: -20, 3: -32, 1: -45, 6: -60, 7: -75 };
+      const DISASSEMBLY_ORDER = [...ASSEMBLY_ORDER].reverse();
+      const EXPLODE_DY = { 4: -18, 5: -18, 2: -26, 3: -42, 1: -59, 6: -78, 7: -98 };
+      const PIECE_DURATION = 0.5;
+      const PIECE_STAGGER = 0.08;
+      const explodeSpan = (DISASSEMBLY_ORDER.length - 1) * PIECE_STAGGER + PIECE_DURATION;
+      const HOLD = 0.35;
 
       gsap.set(manilla, { opacity: 1 });
-      // gsap.set inmediato antes de construir la timeline: un scrub
-      // ScrollTrigger creado con progreso 0 (la escena aún fuera de
-      // pantalla) no pinta su propio estado "from" hasta que el usuario
-      // hace scroll de verdad — sin esto, cada pieza aparecía ya montada
-      // en su sitio desde el primer fotograma, y solo "saltaba" a
-      // explosionada la primera vez que ScrollTrigger recalculaba.
-      ASSEMBLY_ORDER.forEach((idx) => {
-        const el = pieces[idx];
-        if (el) gsap.set(el, { y: EXPLODE_DY[idx], opacity: 0, scale: 0.7 });
-      });
-      ASSEMBLY_ORDER.forEach((idx, i) => {
+      // Estado de partida = estado de reposo real (piezas en y:0, opacas):
+      // a diferencia de la versión anterior, aquí no hace falta "primar"
+      // nada por delante del scrollTrigger — un despiece que empieza
+      // compacto y opaco ya es, por definición, su propio estado inicial.
+      pieces.forEach((el) => el && gsap.set(el, { y: 0, opacity: 1, scale: 1 }));
+
+      DISASSEMBLY_ORDER.forEach((idx, i) => {
         const el = pieces[idx];
         if (!el) return;
         tl.fromTo(
           el,
-          { y: EXPLODE_DY[idx], opacity: 0, scale: 0.7 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
-          i * 0.11,
+          { y: 0 },
+          { y: EXPLODE_DY[idx], duration: PIECE_DURATION, ease: "power2.out" },
+          i * PIECE_STAGGER,
         );
+      });
+
+      ASSEMBLY_ORDER.forEach((idx, i) => {
+        const el = pieces[idx];
+        if (!el) return;
+        tl.to(el, { y: 0, duration: PIECE_DURATION, ease: "power2.inOut" }, explodeSpan + HOLD + i * PIECE_STAGGER);
       });
 
       tl.fromTo(explodedRef.current, { scale: 1 }, { scale: 1.04, duration: 0.14, ease: "power1.out", yoyo: true, repeat: 1 }, "-=0.1");
