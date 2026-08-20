@@ -7,7 +7,6 @@ import cr601Image from "../assets/soluciones/manillas/cr601.png";
 import cr606Image from "../assets/soluciones/manillas/cr606.png";
 import cr603dImage from "../assets/soluciones/manillas/cr603d.png";
 import jm6Image from "../assets/soluciones/manillas/jm6.png";
-import { Cr603Exploded } from "../components/Cr603Exploded.jsx";
 import { useLanguage } from "../hooks/useLanguage.js";
 import "./Scene3Ingenieria.css";
 
@@ -67,27 +66,18 @@ const PRODUCTS = [
 
 const DRAG_CLICK_THRESHOLD = 6;
 
-// El despiece de la escena (Cr603Exploded) es de la CR603 — así que el
-// carrusel entra ya centrado en ella, no en el primer producto de la
-// lista: el montaje termina exactamente en la foto a la que da paso, sin
-// un salto de producto justo al entregar el testigo.
-const CR603_INDEX = PRODUCTS.findIndex((p) => p.image === cr603Image);
-
 export function Scene3Ingenieria({ sceneRef }) {
   const { t } = useLanguage();
-  const [activeProduct, setActiveProduct] = useState(CR603_INDEX);
+  const [activeProduct, setActiveProduct] = useState(0);
   const [activeCallout, setActiveCallout] = useState(null);
   const calloutRefs = useRef([]);
   const slideRefs = useRef([]);
   const carouselRef = useRef(null);
   const cardRef = useRef(null);
-  const explodedRef = useRef(null);
-  const explodedPieceRefs = useRef([]);
-  const carouselWrapRef = useRef(null);
   const orbitTween = useRef(null);
   const posTween = useRef(null);
-  const posRef = useRef(CR603_INDEX);
-  const targetRef = useRef(CR603_INDEX);
+  const posRef = useRef(0);
+  const targetRef = useRef(0);
   const spacingRef = useRef(300);
   const dragState = useRef({ dragging: false, startX: 0, startPos: 0, moved: 0 });
   calloutRefs.current = [];
@@ -147,95 +137,20 @@ export function Scene3Ingenieria({ sceneRef }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Antesala del carrusel (feedback del cliente, segunda vuelta): la
-  // pieza compactada se despliega en su despiece real al hacer scroll y
-  // vuelve a compactarse antes de disolverse en el carrusel — no una
-  // convergencia desde el arranque (esa primera versión no se leía como
-  // animación en absoluto). Piezas SIEMPRE opacas (nunca fade in/out) y
-  // en pura traslación vertical (sin scale ni rotación): es un despiece
-  // técnico deslizando sobre su propio eje, no un efecto gráfico — así
-  // se ve también en el plano CATIA de origen. Mismo trigger que antes
-  // movía solo los callouts, ahora con cinco fases en una sola timeline:
-  // 1) despliegue (explosión), 2) pausa breve para que se lea el
-  // conjunto, 3) recompactado, 4) pulso de cierre, 5) disolución hacia
-  // el carrusel real (ya centrado en la CR603) + callouts, igual que
-  // antes.
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const pieces = explodedPieceRefs.current;
-      const manilla = pieces[0];
-
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sceneRef.current,
           start: "top 70%",
-          // Rango generoso a propósito: una timeline en scrub reparte su
-          // duración TOTAL sobre este rango en píxeles pase lo que pase,
-          // así que al pasar de "solo converge" (1 fase) a "despliega,
-          // pausa, recompacta" (3 fases más el cruce final) sin ampliar
-          // el rango, cada fase quedó con MENOS scroll que antes, no más
-          // — el conjunto se leía incluso peor que la primera versión.
-          end: "top -220%",
+          end: "top 20%",
           scrub: true,
         },
       });
-
-      // Orden de montaje real: primero lo que se apoya directamente sobre
-      // la manilla (carcasa + su tornillería), luego hacia fuera (tapa,
-      // alfombrilla, muelle, piñón) y por último el tornillo que cierra
-      // el conjunto — el mismo orden en el que un montador real lo haría,
-      // no el orden en que aparecen los índices del array. El despliegue
-      // usa el orden inverso (desmontar empieza por el tornillo, no por
-      // la carcasa) para que la lectura sea mecánicamente coherente en
-      // los dos sentidos, no solo en el de recompactado.
-      const ASSEMBLY_ORDER = [4, 5, 2, 3, 1, 6, 7];
-      const DISASSEMBLY_ORDER = [...ASSEMBLY_ORDER].reverse();
-      const EXPLODE_DY = { 4: -18, 5: -18, 2: -26, 3: -42, 1: -59, 6: -78, 7: -98 };
-      const PIECE_DURATION = 0.5;
-      const PIECE_STAGGER = 0.08;
-      const explodeSpan = (DISASSEMBLY_ORDER.length - 1) * PIECE_STAGGER + PIECE_DURATION;
-      const HOLD = 0.35;
-
-      gsap.set(manilla, { opacity: 1 });
-      // Estado de partida = estado de reposo real (piezas en y:0, opacas):
-      // a diferencia de la versión anterior, aquí no hace falta "primar"
-      // nada por delante del scrollTrigger — un despiece que empieza
-      // compacto y opaco ya es, por definición, su propio estado inicial.
-      pieces.forEach((el) => el && gsap.set(el, { y: 0, opacity: 1, scale: 1 }));
-
-      DISASSEMBLY_ORDER.forEach((idx, i) => {
-        const el = pieces[idx];
-        if (!el) return;
-        tl.fromTo(
-          el,
-          { y: 0 },
-          { y: EXPLODE_DY[idx], duration: PIECE_DURATION, ease: "power2.out" },
-          i * PIECE_STAGGER,
-        );
-      });
-
-      ASSEMBLY_ORDER.forEach((idx, i) => {
-        const el = pieces[idx];
-        if (!el) return;
-        tl.to(el, { y: 0, duration: PIECE_DURATION, ease: "power2.inOut" }, explodeSpan + HOLD + i * PIECE_STAGGER);
-      });
-
-      tl.fromTo(explodedRef.current, { scale: 1 }, { scale: 1.04, duration: 0.14, ease: "power1.out", yoyo: true, repeat: 1 }, "-=0.1");
-
-      tl.to(explodedRef.current, { opacity: 0, duration: 0.5, ease: "power1.inOut" }, "+=0.1");
-      tl.fromTo(
-        carouselWrapRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: "power1.inOut" },
-        "<",
-      );
-
-      gsap.set(calloutRefs.current, { opacity: 0, scale: 0 });
       tl.fromTo(
         calloutRefs.current,
         { opacity: 0, scale: 0 },
         { opacity: 1, scale: 1, stagger: 0.3, ease: "none" },
-        "-=0.1",
       );
     }, sceneRef);
 
@@ -335,47 +250,42 @@ export function Scene3Ingenieria({ sceneRef }) {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        <div className="scene3__exploded" ref={explodedRef} aria-hidden="true">
-          <Cr603Exploded className="scene3__exploded-svg" groupRefs={explodedPieceRefs} />
-        </div>
-        <div className="scene3__carousel-content" ref={carouselWrapRef}>
-          <button
-            type="button"
-            className="scene3__nav scene3__nav--prev"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => changeProduct(-1)}
-            aria-label="Anterior"
-          >
-            ‹
-          </button>
-          {PRODUCTS.map((p, i) => (
-            <div className="scene3__slide" key={p.image} ref={setSlideRef(i)}>
-              <img className="scene3__image" src={p.image} alt={p.alt} draggable="false" />
-              {i === activeProduct &&
-                p.positions.map((pos, ci) => (
-                  <button
-                    key={`${activeProduct}-${ci}`}
-                    type="button"
-                    className={`scene3__callout${activeCallout === ci ? " is-active" : ""}`}
-                    style={pos}
-                    ref={addCalloutRef}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={() => handleCalloutClick(ci)}
-                    aria-label={callouts[ci]?.title}
-                  />
-                ))}
-            </div>
-          ))}
-          <button
-            type="button"
-            className="scene3__nav scene3__nav--next"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => changeProduct(1)}
-            aria-label="Siguiente"
-          >
-            ›
-          </button>
-        </div>
+        <button
+          type="button"
+          className="scene3__nav scene3__nav--prev"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => changeProduct(-1)}
+          aria-label="Anterior"
+        >
+          ‹
+        </button>
+        {PRODUCTS.map((p, i) => (
+          <div className="scene3__slide" key={p.image} ref={setSlideRef(i)}>
+            <img className="scene3__image" src={p.image} alt={p.alt} draggable="false" />
+            {i === activeProduct &&
+              p.positions.map((pos, ci) => (
+                <button
+                  key={`${activeProduct}-${ci}`}
+                  type="button"
+                  className={`scene3__callout${activeCallout === ci ? " is-active" : ""}`}
+                  style={pos}
+                  ref={addCalloutRef}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => handleCalloutClick(ci)}
+                  aria-label={callouts[ci]?.title}
+                />
+              ))}
+          </div>
+        ))}
+        <button
+          type="button"
+          className="scene3__nav scene3__nav--next"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => changeProduct(1)}
+          aria-label="Siguiente"
+        >
+          ›
+        </button>
       </div>
       {active && (
         <div className="scene3__card is-visible" ref={cardRef}>
