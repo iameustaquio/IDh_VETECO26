@@ -65,19 +65,28 @@ export function Scene1Umbral({ sceneRef }) {
         "-=0.1",
       );
 
+      // Wordmark/tagline y mensaje se solapan más agresivamente que antes
+      // (más offset negativo, stagger y duración recortados): el conjunto
+      // completo tardaba ~2.9s en revelarse del todo, un margen demasiado
+      // amplio frente al scroll — verificado con Playwright simulando un
+      // scroll rápido pero humano (no un salto sintético): a ritmo
+      // moderado, la escena ya se había desvanecido un 91% antes de que la
+      // última palabra terminara de aparecer. Recortar aquí (y retrasar el
+      // inicio del fundido de salida en Home.jsx) es más seguro que tocar
+      // el rango de scroll compartido con el resto de escenas.
       tl.fromTo(
         [wordmarkRef.current, taglineRef.current],
         { opacity: 0, y: 6 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power1.out" },
-        "-=0.05",
+        { opacity: 1, y: 0, duration: 0.35, ease: "power1.out" },
+        "-=0.15",
       );
 
       const words = wordsRef.current.querySelectorAll("span");
       tl.fromTo(
         words,
         { opacity: 0, y: 8 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: "power1.out" },
-        "-=0.1",
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "power1.out" },
+        "-=0.3",
       );
 
       const hintTimer = gsap.delayedCall(2, () => {

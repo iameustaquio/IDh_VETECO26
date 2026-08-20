@@ -162,7 +162,17 @@ export function Home() {
       const MID_TOTAL = ENTER_UNITS + GAP_UNITS + EXIT_UNITS;
 
       // Escena 1: nunca es "entrante" de nadie (es la primera) — solo
-      // sale, empujada por la llegada de la escena 2.
+      // sale, empujada por la llegada de la escena 2. start retrasado a
+      // "top 40%" (en vez de "top bottom", el arranque más temprano
+      // posible): la escena 1 monta su propio titular con una timeline en
+      // tiempo real, ajena al scroll (ver Scene1Umbral.jsx) — con el
+      // fundido de salida empezando tan pronto, un scroll rápido pero
+      // humano (no un salto sintético) alcanzaba a desvanecer la escena
+      // casi por completo antes de que la última palabra del mensaje
+      // llegara a aparecer, verificado con Playwright. "end" se queda
+      // igual (coincide con el relevo del pin a la escena 2, eso no debe
+      // moverse): solo se retrasa CUÁNDO empieza a desvanecerse, no
+      // cuándo termina de hacerlo.
       gsap.fromTo(
         scenes[0].current,
         { scale: 1, opacity: 1, filter: "blur(0px)" },
@@ -173,7 +183,7 @@ export function Home() {
           ease: "none",
           scrollTrigger: {
             trigger: shells[1].current,
-            start: "top bottom",
+            start: "top 40%",
             end: "top top",
             // scrub con lag (en vez de scrub:true = 1:1 con el scroll
             // bruto) para que el tween persiga la posición con una pizca
